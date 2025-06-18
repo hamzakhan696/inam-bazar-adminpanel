@@ -1,0 +1,87 @@
+.sidebarContainer {
+  width: 240px;
+  height: 100vh;
+  background-color: #F9F9F9;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  overflow: hidden; /* Prevent scrolling */
+}
+
+.logoSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 32px;
+  padding: 0 24px;
+}
+
+.logoText {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.navStack {
+  flex: 1;
+  width: 100%;
+  padding: 0;
+  overflow-y: auto; /* Enable scrolling only if needed */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+}
+
+.navStack::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 10px 24px;
+  margin: 8px;
+  color: #4b5563;
+  transition: all 0.2s ease;
+}
+
+.navItem:hover {
+  background-color: #f9fafb;
+}
+
+.navContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}
+
+.navLabel {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.activeItem {
+  background-color: #53CCFF !important;
+  color: #f9fafb;
+  border-radius: 20px;
+}
+
+.activeItem .navLabel {
+  font-weight: 600;
+}
+
+.customDivider {
+  margin: 8px 24px !important;
+  border-top: 1px solid #e5e7eb !important; /* Force the border to appear */
+  width: calc(100% - 48px) !important; /* Account for the 24px margins */
+}

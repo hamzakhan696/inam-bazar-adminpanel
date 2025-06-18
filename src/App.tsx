@@ -1,33 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { MantineProvider, Container } from "@mantine/core"
+import { Notifications } from "@mantine/notifications"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import Layout from "./AdminPanel/Layout/Layout"
+import { Dashboard } from "./AdminPanel/Dashboard/Dashboard"
+import { Products } from "./AdminPanel/Products/Products"
+import { Orders } from "./AdminPanel/Orders/Orders"
+import { Customers } from "./AdminPanel/Customers/Customers"
+import { Reports } from "./AdminPanel/Reports/Reports"
+import { Discounts } from "./AdminPanel/Discounts/Discounts"
+import { Deals } from "./AdminPanel/Deals/Deals"
+import { Integrations } from "./AdminPanel/Integrations/Integrations"
+import { Help } from "./AdminPanel/Help/Help"
+import { Settings } from "./AdminPanel/Settings/Settings"
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <MantineProvider>
+        <Notifications/>
+        <Container size={1945}>
+           <Router>
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  {/* All routes that should have the sidebar */}
+                  <Route index element={<Dashboard />} />
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="products" element={<Products />} />
+                  <Route path="orders" element={<Orders />} />
+                  <Route path="customers" element={<Customers />} />
+                  <Route path="reports" element={<Reports />} />
+                  <Route path="discounts" element={<Discounts />} />
+                  <Route path="deals" element={<Deals />} />
+                  <Route path="integrations" element={<Integrations />} />
+                  <Route path="help" element={<Help />} />
+                  <Route path="settings" element={<Settings />} />
+                  
+                  {/* You can add nested routes too */}
+                  {/* <Route path="properties/*">
+                    <Route path="add" element={<AddProperty />} />
+                    <Route path="list" element={<PropertyList />} />
+                  </Route> */}
+                </Route>
+        
+                {/* Routes without sidebar (like login) */}
+                {/* <Route path="/login" element={<Login />} /> */}
+              </Routes>
+            </Router>
+        </Container>
+      </MantineProvider>
     </>
   )
 }
