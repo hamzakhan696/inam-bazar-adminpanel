@@ -1,3 +1,6 @@
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
+
 import { MantineProvider, Container } from "@mantine/core"
 import { Notifications } from "@mantine/notifications"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
@@ -12,6 +15,7 @@ import { Deals } from "./AdminPanel/Deals/Deals"
 import { Integrations } from "./AdminPanel/Integrations/Integrations"
 import { Help } from "./AdminPanel/Help/Help"
 import { Settings } from "./AdminPanel/Settings/Settings"
+import LandingPage from "./LandingPage/LandingPage";
 
 
 function App() {
@@ -20,7 +24,7 @@ function App() {
     <>
       <MantineProvider>
         <Notifications/>
-        <Container size={1945}>
+        <Container size={1945} style={{padding: 0}}>
            <Router>
               <Routes>
                 <Route path="/" element={<Layout />}>
@@ -46,6 +50,8 @@ function App() {
         
                 {/* Routes without sidebar (like login) */}
                 {/* <Route path="/login" element={<Login />} /> */}
+                <Route path="landing-page" element={<LandingPage/>} />
+
               </Routes>
             </Router>
         </Container>
