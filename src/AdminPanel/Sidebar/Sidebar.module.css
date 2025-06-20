@@ -1,11 +1,15 @@
 .sidebarContainer {
   width: 240px;
-  height: 100vh;
-  background-color: #F9F9F9;
+  background-color: #f9f9f9;
   display: flex;
   flex-direction: column;
   padding: 24px 0;
-  overflow: hidden; /* Prevent scrolling */
+  overflow: hidden;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
 }
 
 .logoSection {
@@ -27,13 +31,13 @@
   flex: 1;
   width: 100%;
   padding: 0;
-  overflow-y: auto; /* Enable scrolling only if needed */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .navStack::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Chrome/Safari */
+  display: none;
 }
 
 .navItem {
@@ -71,7 +75,7 @@
 }
 
 .activeItem {
-  background-color: #53CCFF !important;
+  background-color: #53ccff !important;
   color: #f9fafb;
   border-radius: 20px;
 }
@@ -82,6 +86,6 @@
 
 .customDivider {
   margin: 8px 24px !important;
-  border-top: 1px solid #e5e7eb !important; /* Force the border to appear */
-  width: calc(100% - 48px) !important; /* Account for the 24px margins */
+  border-top: 1px solid #e5e7eb !important;
+  width: calc(100% - 48px) !important;
 }

@@ -1,3 +1,4 @@
+import { Button, Card, Group, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
@@ -15,7 +16,16 @@ const RevenueAnalyticsChart = () => {
   ];
 
   return (
-    <ResponsiveContainer width="100%" height={isMediumScreen ? 500 : 300}>
+    <Card radius="md" style={{ backgroundColor: "#F9F9F9", height: '100%', borderRadius: '10px' }}>
+      <Group style={{ display: 'flex', justifyContent: 'space-between'}}>
+        <Text style={{ fontSize: '24px', fontWeight: 'bold', padding: 5, margin: 0}}>Revenue Analytics</Text>
+        <Button style={{ color: 'white', backgroundColor: '#53CCFF', padding: '5px 30px', borderRadius: '10px', border: 'none'}}>
+          Last 8 days
+        </Button>
+      </Group>
+
+      <div style={{ width: "100%", height: 310, marginTop: '20px' }}>
+        <ResponsiveContainer width="100%" height={isMediumScreen ? 500 : 300}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
@@ -26,6 +36,8 @@ const RevenueAnalyticsChart = () => {
         <Line type="monotone" dataKey="order" stroke="#A6E2FB" />
       </LineChart>
     </ResponsiveContainer>
+      </div>
+    </Card>
   );
 };
 

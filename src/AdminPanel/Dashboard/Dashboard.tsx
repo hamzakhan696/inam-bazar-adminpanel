@@ -1,169 +1,3 @@
-// import { Text, Group, Card } from "@mantine/core"
-// import { useMediaQuery } from "@mantine/hooks";
-// import { 
-//   IconHome,
-//   IconChartBar,
-//   IconUsers,
-// } from "@tabler/icons-react";
-// import RevenueAnalyticsChart from "./RevenueAnalyticsChart";
-// import MonthlyTargetChart from "./MonthlyTargetChart";
-
-
-// export const Dashboard = () => {
-//     const isSmallScreen = useMediaQuery('(max-width: 768px)');
-//   return (
-//     <>
-//     <Group justify="space-between" mb="sm" wrap="wrap" gap="sm">
-//         <h1 style={{marginLeft: isSmallScreen ? '80px' : '0px', fontSize: '28px'}}>Dashboard</h1>
-//         <Group gap="md" wrap="wrap">
-//             {/* <h1 style={{marginLeft: isSmallScreen ? '80px' : '0px', fontSize: '28px'}}>Dashboard</h1> */}
-//         </Group>
-
-//         <Group style={{ 
-//           display: 'grid', 
-//           gridTemplateColumns: 'repeat(3, 1fr)', 
-//           gap: '20px',
-//           width: '100%',
-//           alignItems: 'start'
-//         }}>
-        //   {/* First Column: Total Sales */}
-        // <Group
-        //   style={{
-        //     backgroundColor: "#F9F9F9",
-        //     padding: "20px",
-        //     borderRadius: "10px",
-        //     display: "flex",
-        //     flexDirection: "column",
-        //     gap: "10px",
-        //   }}
-        // >
-        //   <Group
-        //     style={{
-        //       display: "flex",
-        //       justifyContent: "space-between",
-        //       alignItems: "center",
-        //       width: "100%",
-        //     }}
-        //   >
-        //     <Text>Total Sales</Text>
-        //     <IconHome size={20} />
-        //   </Group>
-        //   <Group
-        //     style={{
-        //       display: "flex",
-        //       justifyContent: "space-between",
-        //       alignItems: "center",
-        //       width: "100%",
-        //     }}
-        //   >
-        //     <Text>$234,234</Text>
-        //     <Text>33.3%</Text>
-        //   </Group>
-        // </Group>
-
-        // {/* Second Column: Revenue */}
-        // <Group
-        //   style={{
-        //     backgroundColor: "#F9F9F9",
-        //     padding: "20px",
-        //     borderRadius: "10px",
-        //     display: "flex",
-        //     flexDirection: "column",
-        //     gap: "10px",
-        //   }}
-        // >
-        //   <Group
-        //     style={{
-        //       display: "flex",
-        //       justifyContent: "space-between",
-        //       alignItems: "center",
-        //       width: "100%",
-        //     }}
-        //   >
-        //     <Text>Revenue</Text>
-        //     <IconChartBar size={20} />
-        //   </Group>
-        //   <Group
-        //     style={{
-        //       display: "flex",
-        //       justifyContent: "space-between",
-        //       alignItems: "center",
-        //       width: "100%",
-        //     }}
-        //   >
-        //     <Text>$180,450</Text>
-        //     <Text>25.7%</Text>
-        //   </Group>
-        // </Group>
-
-        // {/* Third Column: Customers */}
-        // <Group
-        //   style={{
-        //     backgroundColor: "#F9F9F9",
-        //     padding: "20px",
-        //     borderRadius: "10px",
-        //     display: "flex",
-        //     flexDirection: "column",
-        //     gap: "10px",
-        //   }}
-        // >
-        //   <Group
-        //     style={{
-        //       display: "flex",
-        //       justifyContent: "space-between",
-        //       alignItems: "center",
-        //       width: "100%",
-        //     }}
-        //   >
-        //     <Text>Customers</Text>
-        //     <IconUsers size={20} />
-        //   </Group>
-        //   <Group
-        //     style={{
-        //       display: "flex",
-        //       justifyContent: "space-between",
-        //       alignItems: "center",
-        //       width: "100%",
-        //     }}
-        //   >
-        //     <Text>1,245</Text>
-        //     <Text>15.2%</Text>
-        //   </Group>
-//         </Group>
-
-//         {/* RevenueAnalyticsChart below the first two grids (spanning columns 1 and 2) */}
-//         <div
-//           style={{
-//             gridColumn: "1 / span 2",
-//             gridRow: "2",
-//             backgroundColor: "#F9F9F9",
-//             padding: "20px",
-//             borderRadius: "10px",
-//           }}
-//         >
-//           <RevenueAnalyticsChart />
-//         </div>
-
-//         {/* MonthlyTargetChart below the third grid (spanning column 3) */}
-//         <div
-//           style={{
-//             gridColumn: "3",
-//             gridRow: "2",
-//             backgroundColor: "#F9F9F9",
-//             padding: "20px",
-//             borderRadius: "10px",
-//           }}
-//         >
-//           <MonthlyTargetChart />
-//         </div>
-//         </Group>
-      
-//       </Group>
-//     </>
-//   )
-// }
-
-
 import { Text, Group } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconHome, IconChartBar, IconUsers } from "@tabler/icons-react";
@@ -174,13 +8,15 @@ import ActiveUserChart from "./ActiveUserChart";
 import ConversionRateChart from "./ConversionRateChart";
 import TrafficSourceChart from "./TrafficSourceChart";
 import { RecentOrders } from "./RecentOrders";
+import RecentActivityChart from "./RecentActivityChart";
+import { Footer } from "./Footer";
 
 export const Dashboard = () => {
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
   return (
     <>
-      <Group justify="space-between" mb="sm" wrap="wrap" gap="sm">
+      <Group justify="space-between" wrap="wrap" gap="sm">
         <h1 style={{ marginLeft: isSmallScreen ? '80px' : '0px', fontSize: '28px' }}>Dashboard</h1>
       </Group>
 
@@ -197,7 +33,7 @@ export const Dashboard = () => {
         <div style={{ gridColumn: '1', gridRow: '1' }}>
           <Group
           style={{
-            backgroundColor: "#F9F9F9",
+            backgroundColor: "#E8F8FF",
             padding: "20px",
             borderRadius: "10px",
             display: "flex",
@@ -213,8 +49,10 @@ export const Dashboard = () => {
               width: "100%",
             }}
           >
-            <Text>Total Sales</Text>
-            <IconHome size={20} />
+            <Text style={{ color: '#6B6B6A'}}>Total Sales</Text>
+            <span style={{ backgroundColor: '#53CCFF', color: 'white', padding: '5px', borderRadius: '20%', marginRight: '10px' }}>
+              <IconHome size={20} color="white" />
+            </span>
           </Group>
           <Group
             style={{
@@ -224,8 +62,8 @@ export const Dashboard = () => {
               width: "100%",
             }}
           >
-            <Text>$234,234</Text>
-            <Text>33.3%</Text>
+            <Text style={{ fontSize: '34px', fontWeight: 'bold', padding: 0, margin: 0}}>$234,234</Text>
+            <Text style={{ color: '#0FB271' }}>33.3%</Text>
           </Group>
         </Group>
         </div>
@@ -250,8 +88,10 @@ export const Dashboard = () => {
               width: "100%",
             }}
           >
-            <Text>Revenue</Text>
-            <IconChartBar size={20} />
+            <Text style={{ color: '#6B6B6A'}}>Revenue</Text>
+            <span style={{ backgroundColor: 'white', color: 'white', padding: '5px', borderRadius: '20%', marginRight: '10px' }}>
+              <IconChartBar size={20} color="black" />
+            </span>
           </Group>
           <Group
             style={{
@@ -261,8 +101,8 @@ export const Dashboard = () => {
               width: "100%",
             }}
           >
-            <Text>$180,450</Text>
-            <Text>25.7%</Text>
+            <Text style={{ fontSize: '34px', fontWeight: 'bold', padding: 0, margin: 0}}>$180,450</Text>
+            <Text style={{ color: '#FF002E' }}>25.7%</Text>
           </Group>
         </Group>
         </div>
@@ -287,8 +127,10 @@ export const Dashboard = () => {
               width: "100%",
             }}
           >
-            <Text>Customers</Text>
-            <IconUsers size={20} />
+            <Text style={{ color: '#6B6B6A'}}>Customers</Text>
+            <span style={{ backgroundColor: 'white', color: 'white', padding: '5px', borderRadius: '20%', marginRight: '10px' }}>
+              <IconUsers size={20} color="black" />
+            </span>
           </Group>
           <Group
             style={{
@@ -298,8 +140,8 @@ export const Dashboard = () => {
               width: "100%",
             }}
           >
-            <Text>1,245</Text>
-            <Text>15.2%</Text>
+            <Text style={{ fontSize: '34px', fontWeight: 'bold', padding: 0, margin: 0}}>1,245</Text>
+            <Text style={{ color: '#0FB271' }}>15.2%</Text>
           </Group>
           </Group>
         </div>
@@ -339,6 +181,10 @@ export const Dashboard = () => {
           <RecentOrders/>
         </div>
 
+        <div style={{ gridColumn: '4', gridRow: '4' }}>
+          <RecentActivityChart />
+        </div>
+
         {/* MonthlyTargetChart: under Customers */}
         <div
           style={{
@@ -352,6 +198,8 @@ export const Dashboard = () => {
           <MonthlyTargetChart />
         </div>
       </Group>
+
+      <Footer/>
     </>
   );
 };

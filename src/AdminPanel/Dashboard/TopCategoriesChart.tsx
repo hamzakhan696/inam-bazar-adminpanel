@@ -5,7 +5,7 @@ export default function TopCategoriesChart() {
   return (
     <Card style={{ backgroundColor: "#F9F9F9", borderRadius: '10px', height: '100%' }}>
           <Group justify="space-between" mb={30}>
-            <Text size="md" c="black" style={{ fontWeight: 600, padding: "10px 30px" }}>
+            <Text size="md" c="black" style={{ padding: "10px 30px", fontSize: '20px', fontWeight: 'bold', }}>
               Top Categories
             </Text>
           </Group>
@@ -65,42 +65,34 @@ export default function TopCategoriesChart() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <Group mt={20} justify="center" gap={30} style={{ padding: '0px 30px' }}>
-              <Group gap="xs" style={{ display: "flex", alignItems: 'center', justifyContent: 'space-between' }}>
-                <Group style={{ display: "flex", alignItems: 'center', gap: '15px' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '30%', backgroundColor: '#53CCFF' }} />
+            <Group mt={20} gap={30} align="flex-start" style={{ padding: '0px 30px' }}>
+              <Group gap="xs" align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+                <Group align="center" gap="15px">
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#53CCFF' }} />
                   <Text size="sm" c="#666">Lottery</Text>
                 </Group>
-                <Group>
-                  <Text size="sm" c="#666">$2342</Text>
-                </Group>
+                <Text size="sm" c="#666">$2342</Text>
               </Group>
-              <Group gap="xs" style={{ display: "flex", alignItems: 'center', justifyContent: 'space-between' }}>
-                <Group style={{ display: "flex", alignItems: 'center', gap: '15px' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '30%', backgroundColor: '#53CCFF' }} />
+              <Group gap="xs" align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+                <Group align="center" gap="15px">
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#53CCFF' }} />
                   <Text size="sm" c="#666">Ecommerce</Text>
                 </Group>
-                <Group>
-                  <Text size="sm" c="#666">$2342</Text>
-                </Group>
+                <Text size="sm" c="#666">$2342</Text>
               </Group>
-              <Group gap="xs" style={{ display: "flex", alignItems: 'center', justifyContent: 'space-between' }}>
-                <Group style={{ display: "flex", alignItems: 'center', gap: '15px' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '30%', backgroundColor: '#A6E2FB' }} />
+              <Group gap="xs" align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+                <Group align="center" gap="15px">
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#A6E2FB' }} />
                   <Text size="sm" c="#666">Deals</Text>
                 </Group>
-                <Group>
-                  <Text size="sm" c="#666">$2342</Text>
-                </Group>
+                <Text size="sm" c="#666">$2342</Text>
               </Group>
-              <Group gap="xs" style={{ display: "flex", alignItems: 'center', justifyContent: 'space-between' }}>
-                <Group style={{ display: "flex", alignItems: 'center', gap: '15px' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '30%', backgroundColor: '#C8EFFF' }} />
+              <Group gap="xs" align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+                <Group align="center" gap="15px">
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#C8EFFF' }} />
                   <Text size="sm" c="#666">Discount Offers</Text>
                 </Group>
-                <Group>
-                  <Text size="sm" c="#666">$2342</Text>
-                </Group>
+                <Text size="sm" c="#666">$2342</Text>
               </Group>
             </Group>
         </Card>

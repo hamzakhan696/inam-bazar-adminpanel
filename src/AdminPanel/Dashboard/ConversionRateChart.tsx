@@ -19,20 +19,20 @@ export default function ConversionRateChart() {
   ];
 
   return (
-    <Card shadow="sm" radius="md" withBorder style={{ padding: 20, backgroundColor: "#F9F9F9", height: '100%', borderRadius: '10px' }}>
+    <Card style={{ padding: 20, backgroundColor: "#F9F9F9", height: '100%', borderRadius: '10px' }}>
       <Group style={{ display: 'flex', justifyContent: 'space-between'}}>
-        <Text fw={600}>Conversion Rate</Text>
-        <Button style={{ color: 'black', backgroundColor: '#53CCFF', padding: '5px 10px', borderRadius: '10px', border: 'none'}}>
+        <Text style={{ fontSize: '20px', fontWeight: 'bold', padding: 5, margin: 0 }}>Conversion Rate</Text>
+        <Button style={{ color: 'white', backgroundColor: '#53CCFF', padding: '5px 10px', borderRadius: '10px', border: 'none'}}>
           This Week
         </Button>
       </Group>
 
-      <div style={{ width: "100%", height: 310 }}>
+      <div style={{ width: "100%", height: 310, marginTop: '10px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <XAxis dataKey="label" tick={{ fontSize: 11 }} interval={0} />
             <Tooltip formatter={(value: number) => value.toLocaleString()} />
-            <Bar dataKey="value" barSize={40} radius={[10, 10, 0, 0]}>
+            <Bar dataKey="value" barSize={150} radius={[10, 10, 0, 0]}>
               <Cell fill="#B3E9FF" />
               <Cell fill="#B3E9FF" />
               <Cell fill="#A0E1FB" />
