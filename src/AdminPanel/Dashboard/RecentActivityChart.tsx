@@ -19,7 +19,7 @@ export default function RecentActivityChart() {
             <IconShoppingCart size={20} color="white" />
           </span>
           <Flex direction={"column"}>
-            <Text>Maureen Steel purchased 2 items totaling $120.</Text>
+            <Text style={{ fontSize: '12px'}}>Maureen Steel purchased 2 items totaling $120.</Text>
             <Text c="dimmed" style={{ fontSize: '12px'}}>10:30 AM</Text>
           </Flex>
         </div>
@@ -29,7 +29,7 @@ export default function RecentActivityChart() {
             <IconShoppingCart size={20} color="white" />
           </span>
           <Flex direction={"column"}>
-            <Text>The price of "Smart TV" was updated from $500 to $450.</Text>
+            <Text style={{ fontSize: '12px'}}>The price of "Smart TV" was updated from $500 to $450.</Text>
             <Text c="dimmed" style={{ fontSize: '12px'}}>9:45 AM</Text>
           </Flex>
         </div>
@@ -39,17 +39,17 @@ export default function RecentActivityChart() {
             <IconStar size={20} color="white" />
           </span>
           <Flex direction={"column"}>
-            <Text>Vincent Laurent left a 5-star review for "Wireless Headphones."</Text>
+            <Text style={{ fontSize: '12px'}}>5-star review for "Wireless Headphones."</Text>
             <Text c="dimmed" style={{ fontSize: '12px'}}>8:20 AM</Text>
           </Flex>
         </div>
         <div style={{ height: '40px', borderLeft: '2px solid #53CCFF', marginLeft: '14px' }}></div>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', marginTop: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <span style={{ backgroundColor: '#53CCFF', color: 'white', padding: '5px', borderRadius: '50%', marginRight: '10px' }}>
             <IconShoe size={20} color="white" />
           </span>
           <Flex direction={"column"}>
-            <Text>"Running Shoes" stock is below 10 units.</Text>
+            <Text style={{ fontSize: '12px'}}>"Running Shoes" stock is below 10 units.</Text>
             <Text c="dimmed" style={{ fontSize: '12px'}}>7:50 AM</Text>
           </Flex>
         </div>

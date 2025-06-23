@@ -24,8 +24,8 @@ const RevenueAnalyticsChart = () => {
         </Button>
       </Group>
 
-      <div style={{ width: "100%", height: 310, marginTop: '20px' }}>
-        <ResponsiveContainer width="100%" height={isMediumScreen ? 500 : 300}>
+      <div style={{ width: "100%", height: isMediumScreen ? 330 : 280, marginTop: '0px' }}>
+        <ResponsiveContainer width="100%" height={isMediumScreen ? 330 : 300}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />

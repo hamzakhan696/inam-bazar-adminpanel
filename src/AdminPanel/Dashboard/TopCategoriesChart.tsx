@@ -1,7 +1,9 @@
 import { Card, Group, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 export default function TopCategoriesChart() {
+  const isMediumScreen = useMediaQuery('(max-width: 1300px)');
   return (
     <Card style={{ backgroundColor: "#F9F9F9", borderRadius: '10px', height: '100%' }}>
           <Group justify="space-between" mb={30}>
@@ -10,7 +12,7 @@ export default function TopCategoriesChart() {
             </Text>
           </Group>
           {/* Rest of your PieChart code remains unchanged */}
-          <div style={{ height: 250 }}>
+          <div style={{ height: 200 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -65,7 +67,7 @@ export default function TopCategoriesChart() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <Group mt={20} gap={30} align="flex-start" style={{ padding: '0px 30px' }}>
+            <Group mt={20} gap={30} align="flex-start" style={{ padding: isMediumScreen ? '0px 10px' : '0px 30px' }}>
               <Group gap="xs" align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
                 <Group align="center" gap="15px">
                   <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#53CCFF' }} />

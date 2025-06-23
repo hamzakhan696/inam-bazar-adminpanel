@@ -1,4 +1,5 @@
 import { Card, Group, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   BarChart,
   Bar,
@@ -7,6 +8,7 @@ import {
 } from "recharts";
 
 export default function TrafficSourceChart() {
+  const isMediumScreen = useMediaQuery('(max-width: 1300px)');
     const data = [
     { name: 'Cat 1', value: 100 },
     { name: 'Cat 2', value: 100 },
@@ -20,7 +22,7 @@ export default function TrafficSourceChart() {
     <Card style={{ backgroundColor: "#F9F9F9", borderRadius: '10px', height: '100%' }}>
           <Group justify="space-between" mb={30}>
             <Text size="md" c="black" style={{ fontSize: '20px', fontWeight: 'bold', padding: 5, margin: 0 }}>
-              Top Categories
+              Traffic Source
             </Text>
           </Group>
           <div style={{ height: 130 }}>
@@ -46,7 +48,7 @@ export default function TrafficSourceChart() {
           </ResponsiveContainer>
         </Card>
       </div>
-            <Group mt={20} gap={20} align="flex-start" style={{ padding: '0px 30px' }}>
+            <Group mt={20} gap={20} align="flex-start" style={{ padding: isMediumScreen ? '0px 10px' : '0px 30px' }}>
               <Group gap="xs" align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
                 <Group align="center" gap="15px">
                   <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#53CCFF' }} />

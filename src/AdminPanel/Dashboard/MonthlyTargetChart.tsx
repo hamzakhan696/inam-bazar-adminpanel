@@ -1,11 +1,13 @@
 import { ResponsiveContainer, PieChart, Pie, Tooltip, Cell } from "recharts";
 import { Card, Group, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 interface LabelProps {
   cx: number;
   cy: number;
 }
 
 const MonthlyTargetChart = () => {
+  const isMediumScreen = useMediaQuery('(max-width: 1450px)');
   const data = [
     { name: "Progress", value: 85, fill: "#53CCFF" },
     { name: "Remaining", value: 15, fill: "#E0E0E0" },
@@ -20,7 +22,7 @@ const MonthlyTargetChart = () => {
           fill="#333"
           textAnchor="middle"
           dominantBaseline="central"
-          style={{ fontSize: "24px", fontWeight: "bold" }}
+          style={{ fontSize: isMediumScreen ? "18px" : "24px", fontWeight: "bold" }}
         >
           85%
         </text>
@@ -30,7 +32,7 @@ const MonthlyTargetChart = () => {
           fill="#666"
           textAnchor="middle"
           dominantBaseline="central"
-          style={{ fontSize: "14px", fontWeight: "normal" }}
+          style={{ fontSize: isMediumScreen ? "8px" : "14px", fontWeight: "normal" }}
         >
           +8.02% from last month
         </text>
@@ -45,7 +47,7 @@ const MonthlyTargetChart = () => {
         <Text c="dimmed" p="5">...</Text>
       </Group>
 
-      <div style={{ width: "100%", height: 335 }}>
+      <div style={{ width: "100%", height: 285, marginTop: '5px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
