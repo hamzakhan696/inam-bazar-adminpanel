@@ -24,7 +24,7 @@ function App() {
     <>
       <MantineProvider>
         <Notifications/>
-        <Container size={1945} style={{padding: 0}}>
+        <Container size={1945} style={{padding: 0, margin: 0}}>
            <Router>
               <Routes>
                 <Route path="/" element={<Layout />}>
