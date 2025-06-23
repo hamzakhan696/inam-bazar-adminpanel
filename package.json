@@ -23,13 +23,17 @@
     "react-date-range": "^2.0.1",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
-    "recharts": "^2.15.3"
+    "react-slick": "^0.30.3",
+    "recharts": "^2.15.3",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.2.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/react": "^19.1.2",
     "@types/react-date-range": "^1.4.10",
     "@types/react-dom": "^19.1.2",
+    "@types/react-slick": "^0.23.13",
     "@vitejs/plugin-react": "^4.4.1",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",

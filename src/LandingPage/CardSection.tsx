@@ -1,5 +1,9 @@
-import { Box, Button, Card, Grid, Image, Text, Title } from '@mantine/core';
+import { Box, Button, Card, Image, Text, Title } from '@mantine/core';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import './CardSection.css';
+import { useMediaQuery } from '@mantine/hooks';
 
 // Define interface for item structure
 interface CardItem {
@@ -43,6 +47,12 @@ const items: CardItem[] = [
     price: 'Buy Pkr200',
     cardType: 'WinVault Shopping Card',
   },
+  {
+    image: 'assets/fortuner.png',
+    title: 'Fortuner 2.7Ltr',
+    price: 'Buy Pkr200',
+    cardType: 'WinVault Shopping Card',
+  },
 ];
 
 const GenericCard: React.FC<GenericCardProps> = ({ image, title, price, cardType, onAddToCart }) => {
@@ -80,14 +90,51 @@ const GenericCard: React.FC<GenericCardProps> = ({ image, title, price, cardType
 };
 
 export default function CardSection() {
+  const isMobile = useMediaQuery('(max-width: 568px)');
+
+const settings = {
+  dots: false,
+  infinite: true,
+  speed: 3000, // Duration of the transition (in ms) for smooth scrolling
+  slidesToShow: 5,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 0, // Set to 0 for continuous scrolling without pauses
+  cssEase: 'linear', // Linear easing for constant speed
+  arrows: false,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 4,
+        slidesToScroll: 1,
+      },
+    },
+    {
+      breakpoint: 828,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 1,
+      },
+    },
+    {
+      breakpoint: 432,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+};
+
   return (
-    <Box style={{ background: '#100E22', padding: '20px' }}>
+    <Box style={{ background: '#100E22', padding: '20px', paddingLeft: isMobile ? '30px' : '90px' }}>
       <Text ta="center" style={{ color: '#FFF600', margin: '30px 0px', fontSize: '30px', fontWeight: '700' }}>
         🎁 First Time Here? Get a FREE Ticket!
       </Text>
-      <Grid gutter={0}>
+      <Slider {...settings}>
         {items.map((item, index) => (
-          <Grid.Col span={{ base: 6, md: 3 }} key={index}>
+          <div key={index} style={{ padding: '0 30px' }}>
             <GenericCard
               image={item.image}
               title={item.title}
@@ -95,9 +142,9 @@ export default function CardSection() {
               cardType={item.cardType}
               onAddToCart={() => console.log(`Added ${item.title} to cart`)}
             />
-          </Grid.Col>
+          </div>
         ))}
-      </Grid>
+      </Slider>
     </Box>
   );
 }

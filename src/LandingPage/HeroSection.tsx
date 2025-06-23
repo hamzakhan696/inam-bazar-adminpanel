@@ -1,6 +1,12 @@
 import { Box, Button, Flex, Grid, Text, Title } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
 export default function HeroSection() {
+      const issmMobile = useMediaQuery('(max-width: 378px)');
+    const isMobile = useMediaQuery('(max-width: 568px)');
+    const isTablet = useMediaQuery('(max-width: 768px)');
+    const isTablet2 = useMediaQuery('(max-width: 828px)');
+
   return (
     <Box
       style={{
@@ -13,20 +19,21 @@ export default function HeroSection() {
         overflow: 'hidden',
       }}
     >
-      <Flex justify="space-between" align="center" w="100%" px={60} pt={32}>
+      <Flex justify="space-between" align="center" w="100%" px={40} pt={32}>
         <Text
+         
           style={{
             background: 'linear-gradient(259.26deg, #5443AC -1.04%, #7C3589 93.72%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            fontSize: '50px',
+            fontSize: isMobile ? '20px' : isTablet ? '30px' : '50px',
             fontWeight: 700,
           }}
         >
           Logo
         </Text>
         <Button
-          size="lg"
+          size= {isMobile ? "sm" : "lg"}
           radius="md"
           style={{
             background: 'linear-gradient(90deg, #6a5af9 0%, #a259f7 100%)',
@@ -42,20 +49,20 @@ export default function HeroSection() {
       <Grid
         justify="center"
         align="center"
-        style={{ flex: 1, padding: '0 20px', marginTop: '10px' }}
+        style={{ flex: 1, paddingLeft: isMobile ? '20px' : '70px', marginTop: issmMobile ? '40px' :  isMobile ? '80px' : isTablet2 ? '40px' : '10px' }}
       >
-        <Grid.Col span={6}>
-          <Title order={1} style={{ color: '#FFF600', fontSize: '38px', fontWeight: 900 }}>
+        <Grid.Col span={isTablet2 ? 12 : 6}>
+          <Title order={1} style={{ color: '#FFF600', fontSize: isMobile ? '28px' : '38px', fontWeight: 900 }}>
             Ready to Get Lucky?
           </Title>
-          <Title mt={20} order={1} style={{ color: '#fff', fontSize: '50px', fontWeight: 900 }}>
+          <Title mt={20} order={1} style={{ color: '#fff',  fontSize: isMobile ?  '30px' : '50px', fontWeight: 900 }}>
             One Ticket Could Make You a <span style={{ color: '#5B3DEF' }}>Millionaire!</span>
           </Title>
           <Text style={{ color: '#fff', fontSize: '20px', marginTop: '20px' }}>
             Don't miss your chance! Will you be our next lucky winner?
           </Text>
         </Grid.Col>
-        <Grid.Col span={6}>
+        <Grid.Col span={isTablet2 ? 12 : 6}>
           <img
             src="assets/girl-with-car.png"
             alt="Woman"
