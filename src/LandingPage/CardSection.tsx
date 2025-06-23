@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './CardSection.css';
 import { useMediaQuery } from '@mantine/hooks';
-
 // Define interface for item structure
 interface CardItem {
   image: string;
@@ -12,7 +11,6 @@ interface CardItem {
   price: string;
   cardType: string;
 }
-
 // Define interface for GenericCard props
 interface GenericCardProps {
   image: string;
@@ -21,7 +19,6 @@ interface GenericCardProps {
   cardType: string;
   onAddToCart: () => void;
 }
-
 const items: CardItem[] = [
   {
     image: 'assets/iphone.png',
@@ -54,7 +51,6 @@ const items: CardItem[] = [
     cardType: 'WinVault Shopping Card',
   },
 ];
-
 const GenericCard: React.FC<GenericCardProps> = ({ image, title, price, cardType, onAddToCart }) => {
   return (
     <Card shadow="sm" padding={1} radius="md" className="card-container">
@@ -88,10 +84,8 @@ const GenericCard: React.FC<GenericCardProps> = ({ image, title, price, cardType
     </Card>
   );
 };
-
 export default function CardSection() {
   const isMobile = useMediaQuery('(max-width: 568px)');
-
 const settings = {
   dots: false,
   infinite: true,
@@ -126,11 +120,10 @@ const settings = {
     },
   ],
 };
-
   return (
-    <Box style={{ background: '#100E22', padding: '20px', paddingLeft: isMobile ? '30px' : '90px' }}>
+    <Box style={{ background: '#100E22', padding: '20px', paddingLeft: isMobile ? '30px' : '90px', width: '100vw', marginTop: 0 }}>
       <Text ta="center" style={{ color: '#FFF600', margin: '30px 0px', fontSize: '30px', fontWeight: '700' }}>
-        🎁 First Time Here? Get a FREE Ticket!
+       First Time Here? Get a FREE Ticket!
       </Text>
       <Slider {...settings}>
         {items.map((item, index) => (

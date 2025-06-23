@@ -4,7 +4,7 @@ import MillionDollerSection from "./MillionDollerSection";
 
 export default function LandingPage() {
   return (
-    <div style={{padding: 0}}>
+    <div style={{ margin: 0, padding: 0 }}>
       <HeroSection />
       <CardSection />
       <MillionDollerSection />

@@ -8,35 +8,36 @@ export default function HeroSection() {
     const isTablet2 = useMediaQuery('(max-width: 828px)');
 
   return (
-    <Box
+  <Box
       style={{
         minHeight: '100vh',
         width: '100vw',
-        background: 'linear-gradient(259.25deg, #D95DEF -28.04%, #E8C845 100.73%)',
+        backgroundImage: 'url(assets/Frame.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
         overflow: 'hidden',
+        marginBottom: 0,
       }}
     >
-      <Flex justify="space-between" align="center" w="100%" px={40} pt={32}>
-        <Text
-         
+      <Flex justify="space-between" align="center" w="100%" px={isMobile ? 30 : 40} pt={32}>
+    <img
+          src="assets/Inaam Bazar.png"
+          alt="Logo"
           style={{
-            background: 'linear-gradient(259.26deg, #5443AC -1.04%, #7C3589 93.72%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            fontSize: isMobile ? '20px' : isTablet ? '30px' : '50px',
-            fontWeight: 700,
+            width: isMobile ? '100px' : isTablet ? '120px' : '180px',
+            height: 'auto',
           }}
-        >
-          Logo
-        </Text>
+        />
         <Button
           size= {isMobile ? "sm" : "lg"}
           radius="md"
           style={{
-            background: 'linear-gradient(90deg, #6a5af9 0%, #a259f7 100%)',
+            color: '#000',
+            background: '#FBE751',
             fontWeight: 700,
             fontSize: 20,
             boxShadow: '0 4px 24px 0 rgba(162,89,247,0.2)',
@@ -47,12 +48,11 @@ export default function HeroSection() {
       </Flex>
 
       <Grid
-        justify="center"
-        align="center"
+       
         style={{ flex: 1, paddingLeft: isMobile ? '20px' : '70px', marginTop: issmMobile ? '40px' :  isMobile ? '80px' : isTablet2 ? '40px' : '10px' }}
       >
-        <Grid.Col span={isTablet2 ? 12 : 6}>
-          <Title order={1} style={{ color: '#FFF600', fontSize: isMobile ? '28px' : '38px', fontWeight: 900 }}>
+        <Grid.Col span={isTablet2 ? 12 : 6} mt={isTablet2 ? 0 : 150}>
+          <Title order={1} style={{ color: '#FFF600', fontSize: isMobile ? '28px' : '48px', fontWeight: 900 }}>
             Ready to Get Lucky?
           </Title>
           <Title mt={20} order={1} style={{ color: '#fff',  fontSize: isMobile ?  '30px' : '50px', fontWeight: 900 }}>
@@ -86,16 +86,7 @@ export default function HeroSection() {
           lineHeight: 0,
         }}
       >
-        <svg
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-          style={{ display: 'block', width: '100%', height: '100%' }}
-        >
-          <path
-            d="M0,0 C150,120 350,120 600,60 C850,0 1050,0 1200,60 L1200,120 L0,120 Z"
-            fill="#100E22" // Match or contrast the background color
-          ></path>
-        </svg>
+     
       </Box>
     </Box>
   );
