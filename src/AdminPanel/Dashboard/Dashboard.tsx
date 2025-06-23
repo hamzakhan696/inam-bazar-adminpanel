@@ -127,7 +127,7 @@ export const Dashboard = () => {
               }}
             >
               <Text style={{ 
-                fontSize: isExtraSmallScreen ? '28px' : isMediumScreen ? '30px' : '34px', 
+                fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
                 fontWeight: 'bold', 
                 padding: 0, 
                 margin: 0 
@@ -183,7 +183,7 @@ export const Dashboard = () => {
               }}
             >
               <Text style={{ 
-                fontSize: isExtraSmallScreen ? '28px' : isMediumScreen ? '30px' : '34px', 
+                fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
                 fontWeight: 'bold', 
                 padding: 0, 
                 margin: 0 
@@ -239,7 +239,7 @@ export const Dashboard = () => {
               }}
             >
               <Text style={{ 
-                fontSize: isExtraSmallScreen ? '28px' : isMediumScreen ? '30px' : '34px', 
+                fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
                 fontWeight: 'bold', 
                 padding: 0, 
                 margin: 0 
