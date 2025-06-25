@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Box, Stack, Text, Divider } from "@mantine/core";
+import { Box, Stack, Text, Divider, Group, Avatar, Menu, ActionIcon, TextInput } from "@mantine/core";
 import {
   IconHome,
   IconBox,
@@ -12,6 +12,9 @@ import {
   IconHelp,
   IconSettings,
   IconAppsFilled,
+  IconSearch,
+  IconMessage,
+  IconBell,
 } from "@tabler/icons-react";
 import classes from "./Sidebar.module.css";
 
@@ -41,7 +44,6 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
       style={{
         transform: isOpen ? "translateX(0)" : "translateX(-100%)",
         transition: "transform 0.3s ease",
-        // Ensure display is controlled for mobile; on desktop, always visible
         display: isMobile ? (isOpen ? "block" : "none") : "block",
       }}
     >
@@ -75,6 +77,36 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
           </>
         ))}
       </Stack>
+      {/* Right Section (Visible up to 768px when sidebar is open) */}
+      {isOpen && window.innerWidth <= 768 && (
+        <Box className={classes.rightSection} p="sm">
+          <Group gap="xs" justify="space-between" align="center">
+            <TextInput
+              leftSection={<IconSearch size={16} />}
+              placeholder="Search stock, order, etc."
+              style={{ width: '100%', maxWidth: '200px' }}
+            />
+            <ActionIcon variant="subtle" color="gray">
+              <IconMessage size={18} />
+            </ActionIcon>
+            <ActionIcon variant="subtle" color="gray">
+              <IconBell size={18} />
+            </ActionIcon>
+            <Menu position="bottom-end" shadow="md" width={200}>
+              <Menu.Target>
+                <Group gap="xs" style={{ cursor: 'pointer' }}>
+                  <Avatar src="/path-to-avatar.jpg" radius="xl" size="sm" />
+                  <Text>Hashir Kamal</Text>
+                </Group>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item>Profile</Menu.Item>
+                <Menu.Item>Logout</Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+        </Box>
+      )}
     </Box>
   );
 };

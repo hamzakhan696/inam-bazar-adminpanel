@@ -9,16 +9,14 @@ import ConversionRateChart from "./ConversionRateChart";
 import TrafficSourceChart from "./TrafficSourceChart";
 import { RecentOrders } from "./RecentOrders";
 import RecentActivityChart from "./RecentActivityChart";
-import { Footer } from "./Footer";
+import { Footer } from "../Footer/Footer";
+import { TopBar } from "../TopBar/TopBar";
 
 export const Dashboard = () => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isMediumScreen = useMediaQuery('(max-width: 1024px)');
   const isLargeScreen = useMediaQuery('(max-width: 1440px)');
-
-  // Sidebar is visible on screens >1024px, hidden or toggled on screens <=1024px
-  const isMobile = isMediumScreen;
 
   // Define margins based on screen size
   const containerMargin = isExtraSmallScreen 
@@ -43,34 +41,30 @@ export const Dashboard = () => {
           : '15px';
 
   // Calculate available width considering sidebar (200px) on non-mobile screens
-  const sidebarWidth = isMobile ? 0 : 0;
-  const containerWidth = `calc(100vw - ${sidebarWidth}px - ${containerMargin} * 2)`;
+  const containerWidth = `calc(100vw - ${containerMargin} * 2)`;
 
   return (
     <Box
       style={{
-        marginLeft: isMobile ? containerMargin : `calc(${sidebarWidth}px + ${containerMargin})`,
+        marginLeft: containerMargin,
         marginRight: containerMargin,
         maxWidth: containerWidth,
         boxSizing: 'border-box',
         paddingBottom: '20px',
       }}
     >
-      <Group 
-        justify="space-between" 
-        wrap="wrap" 
-        gap="sm" 
-        style={{ 
-          marginBottom: '0px',
-        }}
-      >
-        <h1 style={{ 
-          marginLeft: isMediumScreen ? '75px' : '0px', 
-          fontSize: isExtraSmallScreen ? '24px' : '28px' 
-        }}>
-          Dashboard
-        </h1>
-      </Group>
+
+      <Group justify="space-between" wrap="wrap" gap="sm" style={{ marginBottom: '0px' }}>
+      <h1 style={{ 
+        marginLeft: isMediumScreen ? '75px' : '0px', 
+        fontSize: isExtraSmallScreen ? '24px' : '28px' 
+      }}>
+        Dashboard
+      </h1>
+
+      <TopBar/>
+
+    </Group>
 
       <Group
         style={{

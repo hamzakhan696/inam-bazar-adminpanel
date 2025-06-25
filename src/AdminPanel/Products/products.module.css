@@ -1,0 +1,36 @@
+.list {
+  position: relative;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.indicator {
+  background-color: #53CCFF;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  box-shadow: var(--mantine-shadow-sm);
+
+  [data-mantine-color-scheme="dark"] & {
+    background-color: var(--mantine-color-dark-6);
+    border-color: var(--mantine-color-dark-4);
+  }
+}
+
+.tab {
+  z-index: 1;
+  font-weight: 500;
+  transition: color 100ms ease;
+  padding: 10px 20px;
+  color: var(--mantine-color-gray-7);
+
+  &[data-active] {
+    color: var(--mantine-color-white);
+  }
+
+  [data-mantine-color-scheme="dark"] & {
+    color: var(--mantine-color-dark-1);
+
+    &[data-active] {
+      color: var(--mantine-color-white);
+    }
+  }
+}
