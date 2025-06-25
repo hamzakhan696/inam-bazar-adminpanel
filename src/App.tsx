@@ -16,6 +16,8 @@ import { Integrations } from "./AdminPanel/Integrations/Integrations"
 import { Help } from "./AdminPanel/Help/Help"
 import { Settings } from "./AdminPanel/Settings/Settings"
 import LandingPage from "./LandingPage/LandingPage";
+import { Categories } from "./AdminPanel/Categories/Categories";
+import { Inventory } from "./AdminPanel/Inventory/Inventory";
 
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="products" element={<Products />} />
+                  <Route path="categories" element={<Categories />} />
+                  <Route path="inventory" element={<Inventory />} />
                   <Route path="orders" element={<Orders />} />
                   <Route path="customers" element={<Customers />} />
                   <Route path="reports" element={<Reports />} />

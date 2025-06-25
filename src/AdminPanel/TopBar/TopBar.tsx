@@ -12,6 +12,13 @@ export const TopBar = () => {
               rightSection={<IconSearch size={16} />}
               placeholder="Search stock, order, etc."
               style={{ width: '300px' }}
+              styles={{ 
+                input: {
+                  backgroundColor: '#F9F9F9',
+                  borderRadius: '10px',
+                  border: 'none'
+                },
+              }}
             />
             <ActionIcon variant="subtle" color="gray">
               <IconMessage size={22} />

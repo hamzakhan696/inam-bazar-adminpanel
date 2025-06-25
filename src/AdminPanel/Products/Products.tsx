@@ -2,7 +2,7 @@ import { Group, Box, Button, Paper, Tabs, Table, Avatar, FloatingIndicator } fro
 import { useMediaQuery } from "@mantine/hooks";
 import { TopBar } from "../TopBar/TopBar";
 import { useState } from "react";
-import classes from './products.module.css';
+import classes from '../TabCSS/products.module.css';
 import { AddProduct } from "./AddProduct";
 import { AddLottery } from "./AddLottery";
 
@@ -55,7 +55,6 @@ export const Products = () => {
           c="white" 
           style={{ backgroundColor: '#4C4E6A'}} 
           onClick={() => setValue('3')}
-          // ref={setControlRef('3')}
         >
           Add Product
         </Button>
@@ -63,7 +62,6 @@ export const Products = () => {
           c="white" 
           style={{ backgroundColor: '#53CCFF'}} 
           onClick={() => setValue('4')}
-          // ref={setControlRef('4')}
         >
           Add Lottery
         </Button>

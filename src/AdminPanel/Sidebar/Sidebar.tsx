@@ -15,8 +15,11 @@ import {
   IconSearch,
   IconMessage,
   IconBell,
+  IconChevronDown,
+  IconChevronUp,
 } from "@tabler/icons-react";
 import classes from "./Sidebar.module.css";
+import { useState } from "react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -25,9 +28,19 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
+
   const navItems = [
     { icon: <IconHome size={20} />, label: "Dashboard", path: "/dashboard" },
-    { icon: <IconBox size={20} />, label: "Products", path: "/products" },
+    {
+      icon: <IconBox size={20} />,
+      label: "Products",
+      path: "/products",
+      subItems: [
+        { label: "Category", path: "/categories" },
+        { label: "Inventory", path: "/inventory" },
+      ],
+    },
     { icon: <IconShoppingCart size={20} />, label: "Orders", path: "/orders" },
     { icon: <IconUsers size={20} />, label: "Customers", path: "/customers" },
     { icon: <IconReport size={20} />, label: "Reports", path: "/reports" },
@@ -54,19 +67,49 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
       <Stack gap={0} className={classes.navStack}>
         {navItems.map((item, index) => (
           <>
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                `${classes.navItem} ${isActive ? classes.activeItem : ""}`
-              }
-              onClick={isOpen && window.innerWidth <= 768 ? toggleSidebar : undefined}
-            >
-              <Box className={classes.navContent}>
-                <span className={classes.navIcon}>{item.icon}</span>
-                <Text className={classes.navLabel}>{item.label}</Text>
-              </Box>
-            </NavLink>
+            <Box key={item.path || item.label}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  `${classes.navItem} ${isActive ? classes.activeItem : ""}`
+                }
+                onClick={
+                  item.subItems
+                    ? () => setIsProductsOpen(!isProductsOpen)
+                    : isOpen && window.innerWidth <= 768
+                    ? toggleSidebar
+                    : undefined
+                }
+              >
+                <Box className={classes.navContent}>
+                  <span className={classes.navIcon}>{item.icon}</span>
+                  <Text className={classes.navLabel}>{item.label}</Text>
+                  {item.subItems && (
+                    <span style={{ marginLeft: "auto" }}>
+                      {isProductsOpen ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+                    </span>
+                  )}
+                </Box>
+              </NavLink>
+              {item.subItems && isProductsOpen && (
+                <Stack gap={0} style={{ paddingLeft: "1.5rem" }}>
+                  {item.subItems.map((subItem) => (
+                    <NavLink
+                      key={subItem.path}
+                      to={subItem.path}
+                      className={({ isActive }) =>
+                        `${classes.navItem} ${isActive ? classes.activeItem : ""}`
+                      }
+                      onClick={isOpen && window.innerWidth <= 768 ? toggleSidebar : undefined}
+                    >
+                      <Box className={classes.navContent}>
+                        <Text className={classes.navLabel}>{subItem.label}</Text>
+                      </Box>
+                    </NavLink>
+                  ))}
+                </Stack>
+              )}
+            </Box>
             {index === 6 && (
               <Divider
                 my={8}
@@ -77,14 +120,13 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
           </>
         ))}
       </Stack>
-      {/* Right Section (Visible up to 768px when sidebar is open) */}
       {isOpen && window.innerWidth <= 768 && (
         <Box className={classes.rightSection} p="sm">
           <Group gap="xs" justify="space-between" align="center">
             <TextInput
               leftSection={<IconSearch size={16} />}
               placeholder="Search stock, order, etc."
-              style={{ width: '100%', maxWidth: '200px' }}
+              style={{ width: "100%", maxWidth: "200px" }}
             />
             <ActionIcon variant="subtle" color="gray">
               <IconMessage size={18} />
@@ -94,7 +136,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
             </ActionIcon>
             <Menu position="bottom-end" shadow="md" width={200}>
               <Menu.Target>
-                <Group gap="xs" style={{ cursor: 'pointer' }}>
+                <Group gap="xs" style={{ cursor: "pointer" }}>
                   <Avatar src="/path-to-avatar.jpg" radius="xl" size="sm" />
                   <Text>Hashir Kamal</Text>
                 </Group>
