@@ -14,9 +14,17 @@ export const AddCustomer = () => {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
   const [isTextChecked, setIsTextChecked] = useState<boolean>(false);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
+  const isMediumScreen = useMediaQuery('(max-width: 1024px)');
 
   return (
     <Box p="md">
+      <h1 style={{ 
+          marginLeft: isMediumScreen ? '20px' : '0px', 
+          fontSize: isExtraSmallScreen ? '20px' : '30px' 
+        }}>
+          Add New Customers
+        </h1>
       <Grid gutter="md">
         {/* Left Column */}
         <Grid.Col span={isSmallScreen ? 12 : 6}>

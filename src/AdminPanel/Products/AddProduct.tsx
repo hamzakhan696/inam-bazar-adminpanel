@@ -24,6 +24,8 @@ export const AddProduct = () => {
   const [isDiscountChecked, setIsDiscountChecked] = useState<boolean>(false);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
+  const isMediumScreen = useMediaQuery('(max-width: 1024px)');
 
   const handleFileChange = (selectedFiles: File[] | null) => {
     if (selectedFiles) {
@@ -60,6 +62,12 @@ export const AddProduct = () => {
 
   return (
     <Box p="md">
+      <h1 style={{ 
+          marginLeft: isMediumScreen ? '20px' : '0px', 
+          fontSize: isExtraSmallScreen ? '20px' : '30px' 
+        }}>
+          Add New Product
+        </h1>
       <Grid gutter="md">
         {/* Left Column */}
         <Grid.Col span={isSmallScreen ? 12 : 6}>
@@ -157,7 +165,7 @@ export const AddProduct = () => {
             styles={{
               input: {
                 padding: '25px 20px',
-                borderRadius: '10px',
+                borderRadius: '10px', 
                 borderColor: '#53CCFF',
               },
               label: {

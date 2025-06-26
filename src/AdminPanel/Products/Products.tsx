@@ -76,10 +76,10 @@ export const Products = () => {
         <Tabs value={value} onChange={setValue} variant="none">
           <Tabs.List ref={setRootRef} className={classes.list}>
             <Tabs.Tab value="1" ref={setControlRef('1')} className={classes.tab}>
-              Products
+              All Products
             </Tabs.Tab>
             <Tabs.Tab value="2" ref={setControlRef('2')} className={classes.tab}>
-              Lottery
+              All Lottery
             </Tabs.Tab>
             <FloatingIndicator
               target={value ? controlsRefs[value] : null}

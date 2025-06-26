@@ -1,8 +1,10 @@
-import { Group, Box, Paper, Grid, Text, TextInput } from "@mantine/core";
+import { Group, Box, Paper, Grid, Text, TextInput, Checkbox } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { TopBar } from "../TopBar/TopBar";
+import { useState } from "react";
 
 export const Reports = () => {
+  const [isDiscountChecked, setIsDiscountChecked] = useState<boolean>(false);
   const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isMediumScreen = useMediaQuery('(max-width: 1024px)');
@@ -48,7 +50,7 @@ export const Reports = () => {
             
             <Grid>
               <Grid.Col span={isExtraSmallScreen ? 12 : 6}>
-                <Group style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '80px', padding: '10px 60px' }}>
+                <Group style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '50px', padding: '10px 60px' }}>
                   <Text style={{ fontSize: '18px', color: '#4C4E6A' }}>Search Criteria : N/A</Text>
                   <Text style={{ fontSize: '18px', color: '#4C4E6A' }}>Search Criteria : N/A</Text>
                   <TextInput
@@ -75,7 +77,7 @@ export const Reports = () => {
                 </Group>
               </Grid.Col>
               <Grid.Col span={isExtraSmallScreen ? 12 : 6}>
-                <Group style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '80px', padding: '10px 60px' }}>
+                <Group style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '50px', padding: '10px 60px' }}>
                   <Text style={{ fontSize: '18px', color: '#4C4E6A' }}>From : N/A</Text>
                   <Text style={{ fontSize: '18px', color: '#4C4E6A' }}>To : N/A</Text>
                   <TextInput
@@ -102,6 +104,61 @@ export const Reports = () => {
                 </Group>
               </Grid.Col>
             </Grid>
+            <Group style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '20px', padding: '10px 60px' }}>
+              <Text style={{ fontSize: '22px', color: '#4C4E6A' }}>Select Criteria:</Text>
+              <Checkbox
+                label="Total Sale"
+                checked={isDiscountChecked}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setIsDiscountChecked(event.currentTarget.checked)
+                }
+                mb="sm"
+                styles={{
+                  label: {
+                    fontSize: '18px',
+                  },
+                }}
+              />
+              <Checkbox
+                label="Total Orders"
+                checked={isDiscountChecked}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setIsDiscountChecked(event.currentTarget.checked)
+                }
+                mb="sm"
+                styles={{
+                  label: {
+                    fontSize: '18px',
+                  },
+                }}
+              />
+              <Checkbox
+                label="Total Visitors"
+                checked={isDiscountChecked}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setIsDiscountChecked(event.currentTarget.checked)
+                }
+                mb="sm"
+                styles={{
+                  label: {
+                    fontSize: '18px',
+                  },
+                }}
+              />
+              <Checkbox
+                label="Active Users"
+                checked={isDiscountChecked}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setIsDiscountChecked(event.currentTarget.checked)
+                }
+                mb="sm"
+                styles={{
+                  label: {
+                    fontSize: '18px',
+                  },
+                }}
+              />
+            </Group>
       </Paper>
     </Box>
   );

@@ -4,24 +4,29 @@ import {
   Grid,
   TextInput,
   Textarea,
+  Select,
   FileInput,
+  Checkbox,
   Group,
   Button,
   Image,
   SimpleGrid,
+  Flex,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
 
 interface FileWithPreview {
   url: string;
   name: string;
 }
 
-export const AddLottery = () => {
+export const AddNewDeal = () => {
+  const [isDiscountChecked, setIsDiscountChecked] = useState<boolean>(false);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
-    const isMediumScreen = useMediaQuery('(max-width: 1024px)');
+  const isMediumScreen = useMediaQuery('(max-width: 1024px)');
 
   const handleFileChange = (selectedFiles: File[] | null) => {
     if (selectedFiles) {
@@ -62,7 +67,7 @@ export const AddLottery = () => {
           marginLeft: isMediumScreen ? '20px' : '0px', 
           fontSize: isExtraSmallScreen ? '20px' : '30px' 
         }}>
-          Add New Lottery
+          Add New Deal
         </h1>
       <Grid gutter="md">
         {/* Left Column */}
@@ -152,17 +157,16 @@ export const AddLottery = () => {
               </SimpleGrid>
             )}
           </Box>
-          <TextInput
-            label="Price"
-            placeholder="00"
-            type="number"
+          <Select
+            label="Category"
+            placeholder="Select category"
+            data={['T-Shirts', 'Jackets', 'Pants', 'Accessories']}
             mb="sm"
-            required
             style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
               input: {
                 padding: '25px 20px',
-                borderRadius: '10px',
+                borderRadius: '10px', 
                 borderColor: '#53CCFF',
               },
               label: {
@@ -176,19 +180,18 @@ export const AddLottery = () => {
 
         {/* Right Column */}
         <Grid.Col span={isSmallScreen ? 12 : 6}>
+        <Flex gap={20} align="stretch">
           <TextInput
-            label="Start Date & Time"
-            placeholder="Select date"
-            type='date'
-            multiple
-            mb="sm"
-            required
-            style={{ width: isSmallScreen ? '100%' : '60%' }}
+            label="Products"
+            leftSection={<IconSearch size={20} color="#53CCFF" />}
+            placeholder="Search for Products"
+            style={{ width: '300px' }}
             styles={{
               input: {
-                padding: '25px 20px',
+                backgroundColor: 'white',
                 borderRadius: '10px',
-                borderColor: '#53CCFF',
+                border: '1px solid #53CCFF',
+                padding: '25px 40px',
               },
               label: {
                 fontSize: '18px',
@@ -197,33 +200,99 @@ export const AddLottery = () => {
               },
             }}
           />
-          <TextInput
-            label="Close Date & Time"
-            placeholder="Select sizes"
-            type='date'
-            multiple
-            mb="sm"
-            required
-            style={{ width: isSmallScreen ? '100%' : '60%' }}
-            styles={{
-              input: {
-                padding: '25px 20px',
-                borderRadius: '10px',
-                borderColor: '#53CCFF',
-              },
-              label: {
-                fontSize: '18px',
-                marginBottom: '5px',
-                color: '#4C4E6A',
-              },
+          <Button
+            style={{
+              width: '143px',
+              padding: '10px',
+              backgroundColor: 'transparent',
+              border: '1px solid #53CCFF',
+              color: '#53CCFF',
+              height: '50px',
+              marginTop: '33px',
+              borderRadius: '10px',
             }}
-          />
+          >
+            Browse
+          </Button>
+        </Flex>
           <TextInput
-            label="Quantity"
-            placeholder="0000"
+            label="Price"
+            placeholder="Enter price"
             type="number"
             mb="sm"
             required
+            style={{ width: isSmallScreen ? '100%' : '60%' }}
+            styles={{
+              input: {
+                padding: '25px 20px',
+                borderRadius: '10px',
+                borderColor: '#53CCFF',
+              },
+              label: {
+                fontSize: '18px',
+                margin: '10px 0px',
+                color: '#4C4E6A',
+              },
+            }}
+          />
+          <TextInput
+            label="Compare Price"
+            placeholder="Enter compare price"
+            type="number"
+            mb="sm"
+            style={{ width: isSmallScreen ? '100%' : '60%' }}
+            styles={{
+              input: {
+                padding: '25px 20px',
+                borderRadius: '10px',
+                borderColor: '#53CCFF',
+              },
+              label: {
+                fontSize: '18px',
+                marginBottom: '5px',
+                color: '#4C4E6A',
+              },
+            }}
+          />
+          <Checkbox
+            label="Add Discount"
+            checked={isDiscountChecked}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setIsDiscountChecked(event.currentTarget.checked)
+            }
+            mb="sm"
+            styles={{
+              label: {
+                fontSize: '18px',
+              },
+            }}
+          />
+          {isDiscountChecked && (
+            <TextInput
+              label="Discount Percentage"
+              placeholder="Enter discount percentage"
+              type="number"
+              mb="sm"
+              style={{ width: isSmallScreen ? '100%' : '60%' }}
+              styles={{
+                input: {
+                  padding: '25px 20px',
+                  borderRadius: '10px',
+                  borderColor: '#53CCFF',
+                },
+                label: {
+                  fontSize: '18px',
+                  marginBottom: '5px',
+                  color: '#4C4E6A',
+                },
+              }}
+            />
+          )}
+          <TextInput
+            label="Quantity"
+            placeholder="Enter quantity"
+            type="number"
+            mb="sm"
             style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
               input: {
