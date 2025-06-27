@@ -46,7 +46,8 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
     { icon: <IconReport size={20} />, label: "Reports", path: "/reports" },
     { icon: <IconDiscount2 size={20} />, label: "Discounts", path: "/discounts" },
     { icon: <IconPigMoney size={20} />, label: "Deals", path: "/deals" },
-    { icon: <IconPlugConnected size={20} />, label: "Integrations", path: "/integrations" },
+    { icon: <IconPlugConnected size={20} />, label: "Shipments", path: "/shipments" },
+    { icon: <IconPlugConnected size={20} />, label: "Payments", path: "/payments" },
     { icon: <IconHelp size={20} />, label: "Help", path: "/help" },
     { icon: <IconSettings size={20} />, label: "Settings", path: "/settings" },
   ];

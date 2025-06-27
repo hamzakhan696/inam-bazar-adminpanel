@@ -12,12 +12,13 @@ import { Customers } from "./AdminPanel/Customers/Customers"
 import { Reports } from "./AdminPanel/Reports/Reports"
 import { Discounts } from "./AdminPanel/Discounts/Discounts"
 import { Deals } from "./AdminPanel/Deals/Deals"
-import { Integrations } from "./AdminPanel/Integrations/Integrations"
 import { Help } from "./AdminPanel/Help/Help"
 import { Settings } from "./AdminPanel/Settings/Settings"
 import LandingPage from "./LandingPage/LandingPage";
 import { Categories } from "./AdminPanel/Categories/Categories";
 import { Inventory } from "./AdminPanel/Inventory/Inventory";
+import { Shipments } from "./AdminPanel/Shipments/Shipments";
+import { Payments } from "./AdminPanel/Payments/Payments";
 
 
 function App() {
@@ -41,7 +42,8 @@ function App() {
                   <Route path="reports" element={<Reports />} />
                   <Route path="discounts" element={<Discounts />} />
                   <Route path="deals" element={<Deals />} />
-                  <Route path="integrations" element={<Integrations />} />
+                  <Route path="shipments" element={<Shipments />} />
+                  <Route path="payments" element={<Payments />} />
                   <Route path="help" element={<Help />} />
                   <Route path="settings" element={<Settings />} />
                   

@@ -21,6 +21,9 @@
   transition: color 100ms ease;
   padding: 10px 20px;
   color: var(--mantine-color-gray-7);
+  border: 1px solid #53CCFF;
+  border-radius: var(--mantine-radius-md);
+  margin-right: 10px;
 
   &[data-active] {
     color: var(--mantine-color-white);
