@@ -19,6 +19,7 @@ import { Categories } from "./AdminPanel/Categories/Categories";
 import { Inventory } from "./AdminPanel/Inventory/Inventory";
 import { Shipments } from "./AdminPanel/Shipments/Shipments";
 import { Payments } from "./AdminPanel/Payments/Payments";
+import { PrivacyPolicy } from "./PrivacyPolicy/PrivacyPolicy";
 
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
                 {/* Routes without sidebar (like login) */}
                 {/* <Route path="/login" element={<Login />} /> */}
                 <Route path="landing-page" element={<LandingPage/>} />
+                <Route path="privacy-policy" element={<PrivacyPolicy/>} />
 
               </Routes>
             </Router>

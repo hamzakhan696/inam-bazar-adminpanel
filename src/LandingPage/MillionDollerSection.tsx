@@ -1,5 +1,6 @@
 import { Box, Flex, Grid, Text, Title,  } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { Link } from 'react-router-dom';
 
 export default function MillionDollerSection() {
       const isMobile = useMediaQuery('(max-width: 568px)');
@@ -100,9 +101,32 @@ export default function MillionDollerSection() {
           />
         </Grid.Col>
       </Grid>
-         <Text style={{ color: '#fff', fontSize: isMobile ? '12px' : '16px', textAlign: 'center', marginTop: '20px',}}>
-        User Agreement |  Draw Terms  |  Condition Privacy Policy
-      </Text>
+         {/* <Text style={{ color: '#fff', fontSize: isMobile ? '12px' : '16px', textAlign: 'center', marginTop: '20px',}}>
+        User Agreement |  Draw Terms & Conditions  |  Privacy Policy
+      </Text> */}
+      <div
+          style={{
+            color: '#fff',
+            fontSize: isMobile ? '12px' : '16px',
+            textAlign: 'center',
+            marginTop: '20px',
+            display: 'flex',
+            gap: '10px',
+            justifyContent: 'center'
+          }}
+        >
+          <Link to="/user-agreement" style={{ color: '#fff', textDecoration: 'none' }}>
+            User Agreement
+          </Link>
+          |
+          <Link to="/draw-terms" style={{ color: '#fff', textDecoration: 'none' }}>
+            Draw Terms & Conditions
+          </Link>
+          |
+          <Link to="/privacy-policy" style={{ color: '#fff', textDecoration: 'none' }}>
+            Privacy Policy
+          </Link>
+        </div>
       <Text style={{ color: '#fff', fontSize: isMobile ? '12px' : '16px',  textAlign: 'center', marginTop: '10px', paddingBottom: '20px' }}>
         WinVault - by Creative Code Tech © 2025 All Rights Reserved
       </Text>
