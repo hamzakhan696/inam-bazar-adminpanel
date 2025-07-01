@@ -31,25 +31,25 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
 
   const navItems = [
-    { icon: <IconHome size={20} />, label: "Dashboard", path: "/dashboard" },
+    { icon: <IconHome size={20} />, label: "Dashboard", path: "/admin", exact: true },
     {
       icon: <IconBox size={20} />,
       label: "Products",
-      path: "/products",
+      path: "/admin/products",
       subItems: [
-        { label: "Category", path: "/categories" },
-        { label: "Inventory", path: "/inventory" },
+        { label: "Category", path: "/admin/categories" },
+        { label: "Inventory", path: "/admin/inventory" },
       ],
     },
-    { icon: <IconShoppingCart size={20} />, label: "Orders", path: "/orders" },
-    { icon: <IconUsers size={20} />, label: "Customers", path: "/customers" },
-    { icon: <IconReport size={20} />, label: "Reports", path: "/reports" },
-    { icon: <IconDiscount2 size={20} />, label: "Discounts", path: "/discounts" },
-    { icon: <IconPigMoney size={20} />, label: "Deals", path: "/deals" },
-    { icon: <IconPlugConnected size={20} />, label: "Shipments", path: "/shipments" },
-    { icon: <IconPlugConnected size={20} />, label: "Payments", path: "/payments" },
-    { icon: <IconHelp size={20} />, label: "Help", path: "/help" },
-    { icon: <IconSettings size={20} />, label: "Settings", path: "/settings" },
+    { icon: <IconShoppingCart size={20} />, label: "Orders", path: "/admin/orders" },
+    { icon: <IconUsers size={20} />, label: "Customers", path: "/admin/customers" },
+    { icon: <IconReport size={20} />, label: "Reports", path: "/admin/reports" },
+    { icon: <IconDiscount2 size={20} />, label: "Discounts", path: "/admin/discounts" },
+    { icon: <IconPigMoney size={20} />, label: "Deals", path: "/admin/deals" },
+    { icon: <IconPlugConnected size={20} />, label: "Shipments", path: "/admin/shipments" },
+    { icon: <IconPlugConnected size={20} />, label: "Payments", path: "/admin/payments" },
+    { icon: <IconHelp size={20} />, label: "Help", path: "/admin/help" },
+    { icon: <IconSettings size={20} />, label: "Settings", path: "/admin/settings" },
   ];
 
   return (
@@ -74,6 +74,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
                 className={({ isActive }) =>
                   `${classes.navItem} ${isActive ? classes.activeItem : ""}`
                 }
+                end={item.exact}
                 onClick={
                   item.subItems
                     ? () => setIsProductsOpen(!isProductsOpen)

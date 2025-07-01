@@ -27,41 +27,35 @@ function App() {
   return (
     <>
       <MantineProvider>
-        <Notifications/>
-        <Container size={1945} style={{padding: 0, margin: 0}}>
-           <Router>
-              <Routes>
-                <Route path="/" element={<Layout />}>
-                  {/* All routes that should have the sidebar */}
-                  <Route index element={<Dashboard />} />
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="products" element={<Products />} />
-                  <Route path="categories" element={<Categories />} />
-                  <Route path="inventory" element={<Inventory />} />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="customers" element={<Customers />} />
-                  <Route path="reports" element={<Reports />} />
-                  <Route path="discounts" element={<Discounts />} />
-                  <Route path="deals" element={<Deals />} />
-                  <Route path="shipments" element={<Shipments />} />
-                  <Route path="payments" element={<Payments />} />
-                  <Route path="help" element={<Help />} />
-                  <Route path="settings" element={<Settings />} />
-                  
-                  {/* You can add nested routes too */}
-                  {/* <Route path="properties/*">
-                    <Route path="add" element={<AddProperty />} />
-                    <Route path="list" element={<PropertyList />} />
-                  </Route> */}
-                </Route>
-        
-                {/* Routes without sidebar (like login) */}
-                {/* <Route path="/login" element={<Login />} /> */}
-                <Route path="landing-page" element={<LandingPage/>} />
-                <Route path="privacy-policy" element={<PrivacyPolicy/>} />
+        <Notifications />
+        <Container size={1945} style={{ padding: 0, margin: 0 }}>
+          <Router>
+            <Routes>
+              {/* Landing page as the default route */}
+              <Route path="/" element={<LandingPage />} />
 
-              </Routes>
-            </Router>
+              {/* Admin panel routes with sidebar */}
+              <Route path="/admin" element={<Layout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="products" element={<Products />} />
+                <Route path="categories" element={<Categories />} />
+                <Route path="inventory" element={<Inventory />} />
+                <Route path="orders" element={<Orders />} />
+                <Route path="customers" element={<Customers />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="discounts" element={<Discounts />} />
+                <Route path="deals" element={<Deals />} />
+                <Route path="shipments" element={<Shipments />} />
+                <Route path="payments" element={<Payments />} />
+                <Route path="help" element={<Help />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
+
+              {/* Other routes without sidebar */}
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            </Routes>
+          </Router>
         </Container>
       </MantineProvider>
     </>
