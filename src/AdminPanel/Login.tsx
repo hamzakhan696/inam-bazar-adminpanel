@@ -1,0 +1,152 @@
+import { useState } from 'react';
+import { Box, Button, Flex, Paper, PasswordInput, Text, TextInput, Title } from '@mantine/core';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    setError('');
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/admin-auth/login`, {
+        email,
+        password,
+      });
+      if (response.data && response.data.token) {
+        // Store token in cookies (secure, httpOnly should be set from backend for real apps)
+        Cookies.set('admin_token', response.data.token, { expires: 7, path: '/' });
+        // Redirect to admin dashboard
+        navigate('/admin/dashboard');
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.message || 'Login failed');
+    }
+  };
+
+  return (
+    <Flex style={{ minHeight: '100vh', width: '100vw', background: '#f7fafd' }}>
+      {/* Left Side: Balloon with blue abstract background */}
+      <Box
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          background: '#f7fafd',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Blue abstract background (simulated with a pseudo-element or inline style) */}
+        <Box
+          style={{
+            position: 'absolute',
+            top: '-20%',
+            left: '0',
+            width: '100%',
+            height: '140%',
+            zIndex: 1,
+          }}
+        />
+        {/* Balloon image */}
+        <img
+          src="assets/admin-login.png" // Ensure this image path is correct
+          alt="Balloon"
+       
+        />
+      </Box>
+
+      {/* Right Side: Login Form */}
+      <Flex
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f7fafd',
+          padding: '0 20px', // Added padding for better responsiveness
+        }}
+      >
+        <Paper
+          p={40}
+          style={{
+            width: 600,
+            maxWidth: '100%', // Ensure it fits on smaller screens
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            background: 'transparent',
+          }}
+        >
+          <Title order={3} style={{ fontWeight: 700, marginBottom: 32, textAlign: 'center' }}>
+            Login to Admin Panel
+          </Title>
+          <TextInput
+            label="Email"
+            placeholder="Enter your Email here"
+            size="md"
+            style={{ width: '100%', marginBottom: 20 }}
+            radius="md"
+            value={email}
+            onChange={(e) => setEmail(e.currentTarget.value)}
+          />
+          <PasswordInput
+            label="Password"
+            placeholder="Enter your Password here"
+            size="md"
+            style={{ width: '100%', marginBottom: 10 }}
+            radius="md"
+            value={password}
+            onChange={(e) => setPassword(e.currentTarget.value)}
+          />
+          <Text
+            style={{
+              alignSelf: 'flex-end',
+              color: '#6CD5FF',
+              fontSize: 14,
+              marginBottom: 24,
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            Forget Password
+          </Text>
+          {error && (
+            <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>
+          )}
+          <Button
+            fullWidth
+            size="md"
+            style={{
+              background: '#6CD5FF',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: 20,
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+            onClick={handleLogin}
+          >
+            Login
+          </Button>
+        
+          <Text
+            style={{
+              color: '#bdbdbd',
+              fontSize: 14,
+              textAlign: 'center',
+              marginTop: 24,
+            }}
+          >
+            Reserved directs to{' '}
+            <span style={{ fontWeight: 700, color: '#222' }}>Creative Code Tech</span>
+          </Text>
+        </Paper>
+      </Flex>
+    </Flex>
+  );
+}

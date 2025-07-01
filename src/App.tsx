@@ -20,6 +20,7 @@ import { Inventory } from "./AdminPanel/Inventory/Inventory";
 import { Shipments } from "./AdminPanel/Shipments/Shipments";
 import { Payments } from "./AdminPanel/Payments/Payments";
 import { PrivacyPolicy } from "./PrivacyPolicy/PrivacyPolicy";
+import Login from "./AdminPanel/Login";
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
             <Routes>
               {/* Landing page as the default route */}
               <Route path="/" element={<LandingPage />} />
+              <Route path="/admin-login" element={<Login />} />
 
               {/* Admin panel routes with sidebar */}
               <Route path="/admin" element={<Layout />}>
