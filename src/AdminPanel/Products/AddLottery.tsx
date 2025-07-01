@@ -9,9 +9,10 @@ import {
   Button,
   Image,
   SimpleGrid,
-  Notification,
+  Select,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import axios from 'axios';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
@@ -21,24 +22,33 @@ interface FileWithPreview {
   file: File;
 }
 
+interface FormData {
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  quantity: string;
+  price: string;
+  status: string;
+}
+
 export const AddLottery = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
     startDate: '',
     endDate: '',
     quantity: '',
     price: '',
+    status: 'active',
   });
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
   const isMediumScreen = useMediaQuery('(max-width: 1024px)');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -65,8 +75,18 @@ export const AddLottery = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(false);
+
+    if (!formData.title || !formData.description || !formData.startDate || !formData.endDate || !formData.quantity || !formData.price || !formData.status) {
+      notifications.show({
+        title: 'Error',
+        message: 'Please fill in all required fields',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       const formDataToSend = new FormData();
@@ -76,9 +96,10 @@ export const AddLottery = () => {
       formDataToSend.append('endDate', formData.endDate);
       formDataToSend.append('quantity', formData.quantity);
       formDataToSend.append('price', formData.price);
+      formDataToSend.append('status', formData.status);
       
-      files.forEach((file, index) => {
-        formDataToSend.append(`images[${index}]`, file.file);
+      files.forEach((file) => {
+        formDataToSend.append('images', file.file);
       });
 
       await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/lotteries`, formDataToSend, {
@@ -87,7 +108,14 @@ export const AddLottery = () => {
         },
       });
 
-      setSuccess(true);
+      notifications.show({
+        title: 'Success',
+        message: 'Lottery created successfully!',
+        color: 'teal',
+        icon: <IconCheck size={18} />,
+        autoClose: 3000,
+      });
+
       setFormData({
         title: '',
         description: '',
@@ -95,10 +123,17 @@ export const AddLottery = () => {
         endDate: '',
         quantity: '',
         price: '',
+        status: 'active',
       });
       setFiles([]);
     } catch (err) {
-      setError('Failed to create lottery. Please try again.');
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to create lottery. Please try again.',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
       console.error(err);
     } finally {
       setLoading(false);
@@ -122,16 +157,6 @@ export const AddLottery = () => {
 
   return (
     <Box p="md">
-      {success && (
-        <Notification icon={<IconCheck size={18} />} color="teal" title="Success" mb="md" onClose={() => setSuccess(false)}>
-          Lottery created successfully!
-        </Notification>
-      )}
-      {error && (
-        <Notification icon={<IconX size={18} />} color="red" title="Error" mb="md" onClose={() => setError(null)}>
-          {error}
-        </Notification>
-      )}
       <h1 style={{ 
         marginLeft: isMediumScreen ? '20px' : '0px', 
         fontSize: isExtraSmallScreen ? '20px' : '30px' 
@@ -318,6 +343,32 @@ export const AddLottery = () => {
                 },
               }}
             />
+            <Select
+              label="Status"
+              placeholder="Select status"
+              name="status"
+              value={formData.status}
+              onChange={(value) => setFormData((prev) => ({ ...prev, status: value || 'active' }))}
+              data={[
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' },
+              ]}
+              mb="sm"
+              required
+              style={{ width: isSmallScreen ? '100%' : '60%' }}
+              styles={{
+                input: {
+                  padding: '25px 20px',
+                  borderRadius: '10px',
+                  borderColor: '#53CCFF',
+                },
+                label: {
+                  fontSize: '18px',
+                  marginBottom: '5px',
+                  color: '#4C4E6A',
+                },
+              }}
+            />
           </Grid.Col>
         </Grid>
         <Group justify="flex-end" mt="md">
@@ -328,7 +379,7 @@ export const AddLottery = () => {
             loading={loading}
             disabled={loading}
           >
-            Save Product
+            Save Lottery
           </Button>
         </Group>
       </form>
