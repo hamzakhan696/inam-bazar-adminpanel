@@ -43,7 +43,11 @@ interface FormData {
   categoryId: number | undefined;
 }
 
-export const AddProduct = () => {
+interface AddProductProps {
+  fetchProducts: () => Promise<void>;
+}
+
+export const AddProduct = ({ fetchProducts }: AddProductProps) => {
   const [formData, setFormData] = useState<FormData>({
     title: 'Hic quis nulla disti',
     description: 'Nemo non et eos debi',
@@ -177,6 +181,7 @@ export const AddProduct = () => {
       });
       setFiles([]);
       setIsDiscountChecked(false);
+      await fetchProducts();
     } catch (err) {
       notifications.show({
         title: 'Error',

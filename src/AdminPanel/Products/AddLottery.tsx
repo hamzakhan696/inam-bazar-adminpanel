@@ -32,7 +32,11 @@ interface FormData {
   status: string;
 }
 
-export const AddLottery = () => {
+interface AddLotteryProps {
+  fetchLotteries: () => Promise<void>;
+}
+
+export const AddLottery = ({ fetchLotteries }: AddLotteryProps) => {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -126,6 +130,7 @@ export const AddLottery = () => {
         status: 'active',
       });
       setFiles([]);
+      await fetchLotteries();
     } catch (err) {
       notifications.show({
         title: 'Error',
