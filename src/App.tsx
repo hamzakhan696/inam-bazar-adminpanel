@@ -3,7 +3,7 @@ import "@mantine/notifications/styles.css";
 
 import { MantineProvider, Container } from "@mantine/core"
 import { Notifications } from "@mantine/notifications"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import Layout from "./AdminPanel/Layout/Layout"
 import { Dashboard } from "./AdminPanel/Dashboard/Dashboard"
 import { Products } from "./AdminPanel/Products/Products"
@@ -21,6 +21,7 @@ import { Shipments } from "./AdminPanel/Shipments/Shipments";
 import { Payments } from "./AdminPanel/Payments/Payments";
 import { PrivacyPolicy } from "./PrivacyPolicy/PrivacyPolicy";
 import Login from "./AdminPanel/Login";
+import ProtectedRoute from "./AdminPanel/ProtectedRoute/ProtectedRoute";
 
 
 function App() {
@@ -36,8 +37,8 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/admin-login" element={<Login />} />
 
-              {/* Admin panel routes with sidebar */}
-              <Route path="/admin" element={<Layout />}>
+              {/* Admin panel routes with sidebar - Protected */}
+              <Route path="/admin" element={<ProtectedRoute element={<Layout />} />}>
                 <Route index element={<Dashboard />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="products" element={<Products />} />
@@ -56,6 +57,12 @@ function App() {
 
               {/* Other routes without sidebar */}
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              
+              {/* Catch-all route for any unmatched admin routes */}
+              <Route path="/admin/*" element={<Navigate to="/admin-login" replace />} />
+              
+              {/* Catch-all route for any other unmatched routes */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
         </Container>

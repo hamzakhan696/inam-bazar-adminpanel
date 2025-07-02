@@ -1,30 +1,119 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Button, Flex, Paper, PasswordInput, Text, TextInput, Title } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const token = Cookies.get('admin_token');
+    if (token) {
+      notifications.show({
+        title: "Already Logged In",
+        message: "Redirecting to dashboard...",
+        color: "blue",
+        autoClose: 2000,
+      });
+      navigate('/admin/dashboard');
+    }
+  }, [navigate]);
+
+  // Show notification if redirected from protected route
+  useEffect(() => {
+    if (location.state?.from) {
+      notifications.show({
+        title: "Login Required",
+        message: "Please login to access the requested page",
+        color: "orange",
+        autoClose: 4000,
+      });
+    }
+  }, [location.state]);
+
+  const validateForm = () => {
+    if (!email.trim()) {
+      notifications.show({
+        title: "Validation Error",
+        message: "Please enter your email",
+        color: "red",
+        autoClose: 3000,
+      });
+      return false;
+    }
+    if (!password.trim()) {
+      notifications.show({
+        title: "Validation Error",
+        message: "Please enter your password",
+        color: "red",
+        autoClose: 3000,
+      });
+      return false;
+    }
+    if (!email.includes('@')) {
+      notifications.show({
+        title: "Validation Error",
+        message: "Please enter a valid email address",
+        color: "red",
+        autoClose: 3000,
+      });
+      return false;
+    }
+    return true;
+  };
 
   const handleLogin = async () => {
+    if (!validateForm()) return;
+    
     setError('');
+    setLoading(true);
+    
     try {
       const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/admin-auth/login`, {
         email,
         password,
       });
+      
       if (response.data && response.data.token) {
         // Store token in cookies (secure, httpOnly should be set from backend for real apps)
         Cookies.set('admin_token', response.data.token, { expires: 7, path: '/' });
+        
+        notifications.show({
+          title: "Login Successful",
+          message: "Welcome to Admin Panel!",
+          color: "green",
+          autoClose: 2000,
+        });
+        
         // Redirect to admin dashboard
         navigate('/admin/dashboard');
       }
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Login failed');
+      const errorMessage = err?.response?.data?.message || 'Login failed. Please check your credentials.';
+      setError(errorMessage);
+      
+      notifications.show({
+        title: "Login Failed",
+        message: errorMessage,
+        color: "red",
+        autoClose: 4000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !loading) {
+      handleLogin();
     }
   };
 
@@ -93,6 +182,7 @@ export default function Login() {
             radius="md"
             value={email}
             onChange={(e) => setEmail(e.currentTarget.value)}
+            onKeyPress={handleKeyPress}
           />
           <PasswordInput
             label="Password"
@@ -102,6 +192,7 @@ export default function Login() {
             radius="md"
             value={password}
             onChange={(e) => setPassword(e.currentTarget.value)}
+            onKeyPress={handleKeyPress}
           />
           <Text
             style={{
@@ -121,6 +212,7 @@ export default function Login() {
           <Button
             fullWidth
             size="md"
+            loading={loading}
             style={{
               background: '#6CD5FF',
               color: '#fff',
@@ -131,7 +223,7 @@ export default function Login() {
             }}
             onClick={handleLogin}
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </Button>
         
           <Text

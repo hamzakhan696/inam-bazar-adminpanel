@@ -1,9 +1,32 @@
 import { Text, Group, TextInput, ActionIcon, Menu, Avatar } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconSearch, IconBell, IconMessage } from "@tabler/icons-react";
+import { IconSearch, IconBell, IconMessage, IconLogout } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export const TopBar = () => {
     const isSmallScreen = useMediaQuery('(max-width: 768px)');
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Show confirmation notification
+        notifications.show({
+            title: "Logging Out",
+            message: "You have been successfully logged out",
+            color: "blue",
+            autoClose: 2000,
+        });
+        
+        // Remove the admin token from cookies
+        Cookies.remove('admin_token', { path: '/' });
+        
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+            navigate('/admin-login');
+        }, 1000);
+    };
+
   return (
     <>
     { !isSmallScreen && (
@@ -35,7 +58,13 @@ export const TopBar = () => {
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Item>Profile</Menu.Item>
-                <Menu.Item>Logout</Menu.Item>
+                <Menu.Item 
+                  leftSection={<IconLogout size={14} />}
+                  onClick={handleLogout}
+                  color="red"
+                >
+                  Logout
+                </Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Group>
