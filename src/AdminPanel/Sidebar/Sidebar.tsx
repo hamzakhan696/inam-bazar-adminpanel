@@ -9,8 +9,6 @@ import {
   IconDiscount2,
   IconPigMoney,
   IconPlugConnected,
-  IconHelp,
-  IconSettings,
   IconAppsFilled,
   IconSearch,
   IconMessage,
@@ -48,8 +46,6 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
     { icon: <IconPigMoney size={20} />, label: "Deals", path: "/admin/deals" },
     { icon: <IconPlugConnected size={20} />, label: "Shipments", path: "/admin/shipments" },
     { icon: <IconPlugConnected size={20} />, label: "Payments", path: "/admin/payments" },
-    { icon: <IconHelp size={20} />, label: "Help", path: "/admin/help" },
-    { icon: <IconSettings size={20} />, label: "Settings", path: "/admin/settings" },
   ];
 
   return (

@@ -7,6 +7,8 @@ import { AddProduct } from "./AddProduct";
 import { AddLottery } from "./AddLottery";
 import axios from 'axios';
 import { useForm } from '@mantine/form';
+import { IconCheck, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 
 interface Category {
   id: number;
@@ -325,16 +327,6 @@ export const Products = () => {
     }
   };
 
-  // const getImageUrl = (image: string) => {
-  //   if (!image) {
-  //     console.warn('Image path is empty or undefined');
-  //     return 'https://via.placeholder.com/150';
-  //   }
-  //   const isAbsoluteUrl = image.startsWith('http');
-  //   const imageUrl = isAbsoluteUrl ? image : `${import.meta.env.VITE_APP_API_BASE_URL}/images/${image}`;
-  //   console.log('Constructed image URL:', imageUrl);
-  //   return imageUrl;
-  // };
   const getImageUrl = (image: string) => {
   if (!image) {
     console.warn('Image path is empty or undefined');
@@ -343,9 +335,35 @@ export const Products = () => {
   const isAbsoluteUrl = image.startsWith('http');
   const imageUrl = isAbsoluteUrl
     ? image
-    : `${import.meta.env.VITE_APP_API_BASE_IMAGE_URL}/images/${image}`;
-  console.log('Constructed image URL:', imageUrl);
+    : `${import.meta.env.VITE_APP_API_BASE_IMAGE_URL}/${image}`;
   return imageUrl;
+};
+
+const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) => {
+  try {
+    const response = await axios.patch(
+      `${import.meta.env.VITE_APP_API_BASE_URL}/lotteries/${lotteryId}`,
+      { status: newStatus }
+    );
+    setLotteries(lotteries.map(l => l.id === lotteryId ? response.data : l));
+    setFilteredLotteries(filteredLotteries.map(l => l.id === lotteryId ? response.data : l));
+    notifications.show({
+      title: 'Success',
+      message: 'Status changed successfully!',
+      color: 'teal',
+      icon: <IconCheck size={18} />,
+      autoClose: 3000,
+    });
+  } catch (error) {
+    console.error('Failed to update lottery status:', error);
+    notifications.show({
+      title: 'Error',
+      message: 'Failed to change status. Please try again.',
+      color: 'red',
+      icon: <IconX size={18} />,
+      autoClose: 3000,
+    });
+  }
 };
 
   const renderTableHeader = (isProductTab: boolean) => {
@@ -524,12 +542,12 @@ export const Products = () => {
                               alt={product.title}
                             /> */}
                             <Avatar
-  src={product.images && product.images.length > 0 ? getImageUrl(product.images[0]) : 'https://via.placeholder.com/150'}
-  radius="lg"
-  size="lg"
-  alt={product.title}
-  onError={() => console.error('Failed to load image for product:', product.title)}
-/>
+                              src={product.images && product.images.length > 0 ? getImageUrl(product.images[0]) : 'https://via.placeholder.com/150'}
+                              radius="lg"
+                              size="lg"
+                              alt={product.title}
+                              onError={() => console.error('Failed to load image for product:', product.title)}
+                            />
                             {product.title}
                           </td>
                           <td style={{ padding: '12px' }}>
@@ -584,7 +602,6 @@ export const Products = () => {
                   {renderTableHeader(false)}
                   <tbody>
                     {filteredLotteries.map((lottery) => {
-                      const status = getLotteryStatusLabel(lottery.status);
                       const endDate = new Date(lottery.endDate);
                       const formattedEndDate = endDate.toLocaleDateString();
                       return (
@@ -607,9 +624,20 @@ export const Products = () => {
                             {lottery.title}
                           </td>
                           <td style={{ padding: '12px' }}>
-                            <span style={{ backgroundColor: status.color, padding: '5px 10px', borderRadius: '5px' }}>
-                              {status.label}
-                            </span>
+                            <Select
+                              value={lottery.status}
+                              onChange={(value) => handleLotteryStatusChange(lottery.id, value as string)}
+                              data={['active', 'inactive']}
+                              style={{ width: '30%' }}
+                              styles={{
+                                input: { 
+                                  backgroundColor: getLotteryStatusLabel(lottery.status).color,
+                                  padding: '5px 10px',
+                                  borderRadius: '5px',
+                                  border: 'none',
+                                }
+                              }}
+                            />
                           </td>
                           <td style={{ padding: '12px', color: '#FF002E' }}>{lottery.quantity} in Stocks</td>
                           <td style={{ padding: '12px' }}>{formattedEndDate}</td>

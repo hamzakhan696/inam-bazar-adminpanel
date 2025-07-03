@@ -1,6 +1,6 @@
 import { Text, Group, TextInput, ActionIcon, Menu, Avatar } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconSearch, IconBell, IconMessage, IconLogout } from "@tabler/icons-react";
+import { IconSearch, IconBell, IconLogout } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -10,7 +10,6 @@ export const TopBar = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Show confirmation notification
         notifications.show({
             title: "Logging Out",
             message: "You have been successfully logged out",
@@ -18,10 +17,8 @@ export const TopBar = () => {
             autoClose: 2000,
         });
         
-        // Remove the admin token from cookies
         Cookies.remove('admin_token', { path: '/' });
         
-        // Redirect to login page after a short delay
         setTimeout(() => {
             navigate('/admin-login');
         }, 1000);
@@ -43,9 +40,6 @@ export const TopBar = () => {
                 },
               }}
             />
-            <ActionIcon variant="subtle" color="gray">
-              <IconMessage size={22} />
-            </ActionIcon>
             <ActionIcon variant="subtle" color="gray">
               <IconBell size={22} />
             </ActionIcon>
