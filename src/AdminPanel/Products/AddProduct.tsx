@@ -23,6 +23,7 @@ interface FileWithPreview {
   url: string;
   name: string;
   file: File;
+  color: string;
 }
 
 interface InventoryItem {
@@ -33,14 +34,23 @@ interface InventoryItem {
 interface FormData {
   title: string;
   description: string;
-  images: File[];
-  color: string;
-  sizes: string[];
+  images: { url: string; color: string }[];
+  colors: string[];
+  sizes: string;
   price: number | undefined;
   comparePrice: number | undefined;
   discount: number | undefined;
   inventory: InventoryItem[];
   categoryId: number | undefined;
+  isArrival: boolean;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  images: string[];
+  description: string;
+  productsCount: number;
 }
 
 interface AddProductProps {
@@ -49,40 +59,65 @@ interface AddProductProps {
 
 export const AddProduct = ({ fetchProducts }: AddProductProps) => {
   const [formData, setFormData] = useState<FormData>({
-    title: 'Hic quis nulla disti',
-    description: 'Nemo non et eos debi',
+    title: '',
+    description: '',
     images: [],
-    color: 'Blue',
-    sizes: ['M'],
-    price: 104,
-    comparePrice: 484,
-    discount: 12,
+    colors: [],
+    sizes: '',
+    price: undefined,
+    comparePrice: undefined,
+    discount: undefined,
     inventory: [
       { size: 'S', quantity: 0 },
-      { size: 'M', quantity: 11111 },
+      { size: 'M', quantity: 0 },
       { size: 'L', quantity: 0 },
       { size: 'XL', quantity: 0 },
       { size: '2XL', quantity: 0 },
     ],
-    categoryId: 1,
+    categoryId: undefined,
+    isArrival: false,
   });
-  const [isDiscountChecked, setIsDiscountChecked] = useState<boolean>(true);
+  const [isDiscountChecked, setIsDiscountChecked] = useState<boolean>(false);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
   const isMediumScreen = useMediaQuery('(max-width: 1024px)');
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/categories`);
+        setCategories(response.data);
+      } catch (err) {
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to fetch categories. Please try again.',
+          color: 'red',
+          icon: <IconX size={18} />,
+          autoClose: 3000,
+        });
+        console.error(err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleFileChange = (selectedFiles: File[] | null) => {
     if (selectedFiles) {
       const newFiles = Array.from(selectedFiles)
         .slice(0, 5 - files.length)
-        .map((file) => ({
+        .map((file, index) => ({
           url: URL.createObjectURL(file),
           name: file.name,
           file,
+          color: formData.colors[index % formData.colors.length] || '',
         }));
       setFiles([...files, ...newFiles].slice(0, 5));
-      setFormData((prev) => ({ ...prev, images: [...prev.images, ...selectedFiles].slice(0, 5) }));
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...newFiles.map((f) => ({ url: f.name, color: f.color }))].slice(0, 5),
+      }));
     }
   };
 
@@ -95,8 +130,24 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
   const handleInputChange = (field: keyof FormData, value: any) => {
     if (field === 'categoryId') {
       setFormData((prev) => ({ ...prev, [field]: value ? Number(value) : undefined }));
+    } else if (field === 'colors') {
+      const updatedColors = Array.isArray(value) ? value : [];
+      setFormData((prev) => ({
+        ...prev,
+        colors: updatedColors,
+        images: prev.images.map((img, index) => ({
+          ...img,
+          color: updatedColors[index % updatedColors.length] || '',
+        })),
+      }));
+      setFiles((prev) =>
+        prev.map((file, index) => ({
+          ...file,
+          color: updatedColors[index % updatedColors.length] || '',
+        }))
+      );
     } else if (field === 'sizes') {
-      setFormData((prev) => ({ ...prev, [field]: Array.isArray(value) ? value : [] }));
+      setFormData((prev) => ({ ...prev, [field]: Array.isArray(value) ? value.join(',') : '' }));
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }));
     }
@@ -113,7 +164,7 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.description || !formData.price || !formData.categoryId) {
+    if (!formData.title || !formData.description || !formData.price || !formData.categoryId || !formData.sizes) {
       notifications.show({
         title: 'Error',
         message: 'Please fill in all required fields',
@@ -128,24 +179,20 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
-      files.forEach((file) => {
+      files.forEach((file, index) => {
         formDataToSend.append('images', file.file);
+        formDataToSend.append(`imageColors[${index}]`, file.color);
       });
-      formDataToSend.append('color', formData.color);
-      if (Array.isArray(formData.sizes)) {
-        formData.sizes.forEach((size, index) => {
-          formDataToSend.append(`sizes[${index}]`, size);
-        });
-      }
+      formData.colors.forEach((color) => {
+      formDataToSend.append('colors[]', color);
+      });
+      formDataToSend.append('sizes', formData.sizes);
       formDataToSend.append('price', formData.price.toString());
-      if (formData.comparePrice) {
-        formDataToSend.append('comparePrice', formData.comparePrice.toString());
-      }
-      if (isDiscountChecked && formData.discount) {
-        formDataToSend.append('discount', formData.discount.toString());
-      }
+      formDataToSend.append('comparePrice', formData.comparePrice?.toString() || '0');
+      formDataToSend.append('discount', formData.discount?.toString() || '0');
       formDataToSend.append('inventory', JSON.stringify(formData.inventory));
       formDataToSend.append('categoryId', formData.categoryId.toString());
+      formDataToSend.append('isArrival', formData.isArrival.toString());
 
       await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/products`, formDataToSend, {
         headers: {
@@ -165,8 +212,8 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
         title: '',
         description: '',
         images: [],
-        color: '',
-        sizes: [],
+        colors: [],
+        sizes: '',
         price: undefined,
         comparePrice: undefined,
         discount: undefined,
@@ -178,6 +225,7 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
           { size: '2XL', quantity: 0 },
         ],
         categoryId: undefined,
+        isArrival: false,
       });
       setFiles([]);
       setIsDiscountChecked(false);
@@ -206,6 +254,9 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
           borderRadius: '8px',
         }}
       />
+      <div style={{ position: 'absolute', bottom: 0, background: 'rgba(0,0,0,0.5)', color: 'white', width: '100%', textAlign: 'center' }}>
+        {file.color}
+      </div>
     </Box>
   ));
 
@@ -301,17 +352,41 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
               </SimpleGrid>
             )}
           </Box>
+          <MultiSelect
+            label="Colors"
+            placeholder="Select colors"
+            value={formData.colors}
+            onChange={(value) => handleInputChange('colors', value)}
+            data={['Red', 'Blue', 'Green', 'Black', 'White']}
+            mb="sm"
+            required
+            style={{ width: isSmallScreen ? '100%' : '60%' }}
+            styles={{
+              input: {
+                padding: '15px 20px',
+                borderRadius: '10px',
+                borderColor: '#53CCFF',
+              },
+              label: {
+                fontSize: '18px',
+                marginBottom: '5px',
+                color: '#4C4E6A',
+              },
+            }}
+          />
+        </Grid.Col>
+
+        {/* Right Column */}
+        <Grid.Col span={isSmallScreen ? 12 : 6}>
           <Select
             label="Category"
             placeholder="Select category"
             value={formData.categoryId?.toString()}
             onChange={(value) => handleInputChange('categoryId', value)}
-            data={[
-              { value: '1', label: 'T-Shirts' },
-              { value: '2', label: 'Jackets' },
-              { value: '3', label: 'Pants' },
-              { value: '4', label: 'Accessories' },
-            ]}
+            data={categories.map((category) => ({
+              value: category.id.toString(),
+              label: category.name,
+            }))}
             mb="sm"
             required
             style={{ width: isSmallScreen ? '100%' : '60%' }}
@@ -328,44 +403,31 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
               },
             }}
           />
-        </Grid.Col>
-
-        {/* Right Column */}
-        <Grid.Col span={isSmallScreen ? 12 : 6}>
-          <Select
-            label="Color"
-            placeholder="Select color"
-            value={formData.color}
-            onChange={(value) => handleInputChange('color', value || '')}
-            data={['Red', 'Blue', 'Green', 'Black', 'White']}
+          <Checkbox
+            label="New Arrival"
+            checked={formData.isArrival}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleInputChange('isArrival', event.currentTarget.checked)
+            }
             mb="sm"
-            required
-            style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
-              input: {
-                padding: '25px 20px',
-                borderRadius: '10px',
-                borderColor: '#53CCFF',
-              },
               label: {
                 fontSize: '18px',
-                marginBottom: '5px',
-                color: '#4C4E6A',
               },
             }}
           />
           <MultiSelect
             label="Sizes"
             placeholder="Select sizes"
-            value={formData.sizes}
+            value={formData.sizes ? formData.sizes.split(',') : []}
             onChange={(value) => handleInputChange('sizes', value)}
-            data={['XS', 'S', 'M', 'L', 'XL']}
+            data={['XS', 'S', 'M', 'L', 'XL', '2XL']}
             mb="sm"
             required
             style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
               input: {
-                padding: '25px 20px',
+                padding: '15px 20px',
                 borderRadius: '10px',
                 borderColor: '#53CCFF',
               },
@@ -470,7 +532,7 @@ export const AddProduct = ({ fetchProducts }: AddProductProps) => {
                     styles={{
                       input: {
                         padding: '25px 20px',
-                        borderRadius: ' начинать с 10px',
+                        borderRadius: '10px',
                         borderColor: '#53CCFF',
                       },
                       label: {

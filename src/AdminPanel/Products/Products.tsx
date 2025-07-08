@@ -22,9 +22,9 @@ interface Product {
   id: number;
   title: string;
   description: string;
-  images: string[];
-  color: string;
-  sizes: string[];
+  images: { url: string; color: string }[] | null;
+  colors: string[];
+  sizes: string;
   price: number;
   comparePrice: number;
   discount: number;
@@ -33,6 +33,7 @@ interface Product {
   category: Category;
   status: number;
   inventory: any[];
+  isArrival: boolean;
 }
 
 interface Lottery {
@@ -43,7 +44,7 @@ interface Lottery {
   endDate: string;
   quantity: number;
   price: number;
-  images: string[];
+  images: string[] | null;
   status: string;
 }
 
@@ -75,8 +76,8 @@ export const Products = () => {
       quantity: 0,
       categoryId: '',
       status: '',
-      color: '',
-      sizes: [] as string[],
+      colors: [] as string[],
+      sizes: '',
       startDate: '',
       endDate: '',
     },
@@ -97,7 +98,7 @@ export const Products = () => {
       : isMediumScreen 
         ? '15px' 
         : isLargeScreen 
-          ? 'helves20px' 
+          ? '20px' 
           : '30px';
 
   const containerWidth = `calc(100vw - ${containerMargin} * 2)`;
@@ -108,6 +109,7 @@ export const Products = () => {
     try {
       const response = await axios.get<Product[]>(`${import.meta.env.VITE_APP_API_BASE_URL}/products`);
       const data = Array.isArray(response.data) ? response.data : [];
+      console.log('Products API response:', data);
       setProducts(data);
       setFilteredProducts(data);
     } catch (error) {
@@ -126,6 +128,7 @@ export const Products = () => {
     try {
       const response = await axios.get<Lottery[]>(`${import.meta.env.VITE_APP_API_BASE_URL}/lotteries`);
       const data = Array.isArray(response.data) ? response.data : [];
+      console.log('Lotteries API response:', data);
       setLotteries(data);
       setFilteredLotteries(data);
     } catch (error) {
@@ -235,8 +238,8 @@ export const Products = () => {
         quantity: 'totalQuantity' in item ? item.totalQuantity : item.quantity,
         categoryId: 'categoryId' in item ? item.categoryId.toString() : '',
         status: 'status' in item ? (typeof item.status === 'number' ? item.status.toString() : item.status) : '',
-        color: 'color' in item ? item.color : '',
-        sizes: 'sizes' in item && Array.isArray(item.sizes) ? item.sizes : [],
+        colors: 'colors' in item ? item.colors : [],
+        sizes: 'sizes' in item ? item.sizes : '',
         startDate: 'startDate' in item ? item.startDate : '',
         endDate: 'endDate' in item ? item.endDate : '',
       });
@@ -264,9 +267,22 @@ export const Products = () => {
         setSelectedLotteries([]);
         setSelectAllLotteries(false);
       }
+      notifications.show({
+        title: 'Success',
+        message: `${isProductTab ? 'Products' : 'Lotteries'} deleted successfully!`,
+        color: 'teal',
+        icon: <IconCheck size={18} />,
+        autoClose: 3000,
+      });
     } catch (error) {
       console.error('Error deleting items:', error);
-      setError(`Failed to delete ${isProductTab ? 'products' : 'lotteries'}. Please try again.`);
+      notifications.show({
+        title: 'Error',
+        message: `Failed to delete ${isProductTab ? 'products' : 'lotteries'}. Please try again.`,
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -285,6 +301,8 @@ export const Products = () => {
           status: isProductTab ? parseInt(form.values.status) : form.values.status,
           totalQuantity: isProductTab ? form.values.quantity : undefined,
           quantity: !isProductTab ? form.values.quantity : undefined,
+          colors: isProductTab ? form.values.colors : undefined,
+          sizes: isProductTab ? form.values.sizes : undefined,
         }
       );
 
@@ -298,9 +316,22 @@ export const Products = () => {
       setEditModalOpen(false);
       setEditingItem(null);
       form.reset();
+      notifications.show({
+        title: 'Success',
+        message: `${isProductTab ? 'Product' : 'Lottery'} updated successfully!`,
+        color: 'teal',
+        icon: <IconCheck size={18} />,
+        autoClose: 3000,
+      });
     } catch (error) {
       console.error('Error updating item:', error);
-      setError(`Failed to update ${isProductTab ? 'product' : 'lottery'}. Please try again.`);
+      notifications.show({
+        title: 'Error',
+        message: `Failed to update ${isProductTab ? 'product' : 'lottery'}. Please try again.`,
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -327,44 +358,52 @@ export const Products = () => {
     }
   };
 
-  const getImageUrl = (image: string) => {
-  if (!image) {
-    console.warn('Image path is empty or undefined');
-    return 'https://via.placeholder.com/150';
-  }
-  const isAbsoluteUrl = image.startsWith('http');
-  const imageUrl = isAbsoluteUrl
-    ? image
-    : `${import.meta.env.VITE_APP_API_BASE_IMAGE_URL}/${image}`;
-  return imageUrl;
-};
+  const getImageUrl = (image: { url: string; color: string } | string | null | undefined) => {
+    if (!image) {
+      console.warn('Image is null or undefined');
+      return 'https://via.placeholder.com/150';
+    }
+    let imageUrl: string;
+    if (typeof image === 'object' && 'url' in image) {
+      imageUrl = image.url;
+    } else if (typeof image === 'string') {
+      imageUrl = image;
+    } else {
+      console.warn('Image path is invalid:', image);
+      return 'https://via.placeholder.com/150';
+    }
+    const isAbsoluteUrl = imageUrl.startsWith('http');
+    return isAbsoluteUrl
+      ? imageUrl
+      : `${import.meta.env.VITE_APP_API_BASE_IMAGE_URL}/${imageUrl}`;
+  };
 
-const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) => {
-  try {
-    const response = await axios.patch(
-      `${import.meta.env.VITE_APP_API_BASE_URL}/lotteries/${lotteryId}`,
-      { status: newStatus }
-    );
-    setLotteries(lotteries.map(l => l.id === lotteryId ? response.data : l));
-    setFilteredLotteries(filteredLotteries.map(l => l.id === lotteryId ? response.data : l));
-    notifications.show({
-      title: 'Success',
-      message: 'Status changed successfully!',
-      color: 'teal',
-      icon: <IconCheck size={18} />,
-      autoClose: 3000,
-    });
-  } catch (error) {
-    console.error('Failed to update lottery status:', error);
-    notifications.show({
-      title: 'Error',
-      message: 'Failed to change status. Please try again.',
-      color: 'red',
-      icon: <IconX size={18} />,
-      autoClose: 3000,
-    });
-  }
-};
+  const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_APP_API_BASE_URL}/lotteries/${lotteryId}`,
+        { status: newStatus }
+      );
+      setLotteries(lotteries.map(l => l.id === lotteryId ? response.data : l));
+      setFilteredLotteries(filteredLotteries.map(l => l.id === lotteryId ? response.data : l));
+      notifications.show({
+        title: 'Success',
+        message: 'Status changed successfully!',
+        color: 'teal',
+        icon: <IconCheck size={18} />,
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.error('Failed to update lottery status:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to change status. Please try again.',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
+    }
+  };
 
   const renderTableHeader = (isProductTab: boolean) => {
     const isAnySelected = isProductTab ? selectedProducts.length > 0 : selectedLotteries.length > 0;
@@ -375,12 +414,12 @@ const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) =
         <thead>
           <tr>
             <th style={{ padding: '12px' }}>
-            <input 
-              type="checkbox" 
-              style={{ width: '20px', height: '20px' }} 
-              checked={isProductTab ? selectAllProducts : selectAllLotteries}
-              onChange={isProductTab ? handleSelectAllProducts : handleSelectAllLotteries}
-            />
+              <input 
+                type="checkbox" 
+                style={{ width: '20px', height: '20px' }} 
+                checked={isProductTab ? selectAllProducts : selectAllLotteries}
+                onChange={isProductTab ? handleSelectAllProducts : handleSelectAllLotteries}
+              />
             </th>
             <th colSpan={isProductTab ? 5 : 5} style={{ padding: '12px' }}>
               <Group justify="flex-start">
@@ -524,6 +563,7 @@ const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) =
                   <tbody>
                     {filteredProducts.map((product) => {
                       const status = getProductStatusLabel(product.status);
+                      console.log('Product:', product.title, 'Images:', product.images);
                       return (
                         <tr key={product.id} style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
                           <td style={{ padding: '12px' }}>
@@ -535,18 +575,12 @@ const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) =
                             />
                           </td>
                           <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            {/* <Avatar 
-                              src={product.images && product.images.length > 0 ? getImageUrl(product.images[0]) : 'https://via.placeholder.com/150'} 
-                              radius="lg" 
-                              size="lg" 
-                              alt={product.title}
-                            /> */}
                             <Avatar
                               src={product.images && product.images.length > 0 ? getImageUrl(product.images[0]) : 'https://via.placeholder.com/150'}
                               radius="lg"
                               size="lg"
                               alt={product.title}
-                              onError={() => console.error('Failed to load image for product:', product.title)}
+                              onError={() => console.error('Failed to load image for product:', product.title, 'Image:', product.images?.[0])}
                             />
                             {product.title}
                           </td>
@@ -604,6 +638,7 @@ const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) =
                     {filteredLotteries.map((lottery) => {
                       const endDate = new Date(lottery.endDate);
                       const formattedEndDate = endDate.toLocaleDateString();
+                      console.log('Lottery:', lottery.title, 'Images:', lottery.images);
                       return (
                         <tr key={lottery.id} style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
                           <td style={{ padding: '12px' }}>
@@ -620,6 +655,7 @@ const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) =
                               radius="lg" 
                               size="lg" 
                               alt={lottery.title}
+                              onError={() => console.error('Failed to load image for lottery:', lottery.title, 'Image:', lottery.images?.[0])}
                             />
                             {lottery.title}
                           </td>
@@ -714,16 +750,16 @@ const handleLotteryStatusChange = async (lotteryId: number, newStatus: string) =
                 {...form.getInputProps('status')}
                 mb="md"
               />
-              <TextInput
-                label="Color"
-                placeholder="Enter color"
-                {...form.getInputProps('color')}
+              <MultiSelect
+                label="Colors"
+                placeholder="Select colors"
+                data={['Red', 'Blue', 'Green', 'Black', 'White']}
+                {...form.getInputProps('colors')}
                 mb="md"
               />
-              <MultiSelect
+              <TextInput
                 label="Sizes"
-                placeholder="Select sizes"
-                data={['XS', 'S', 'M', 'L', 'XL', 'XXL']}
+                placeholder="Enter sizes (comma-separated)"
                 {...form.getInputProps('sizes')}
                 mb="md"
               />
