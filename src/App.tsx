@@ -28,6 +28,7 @@ function App() {
 
   return (
     <>
+    
       <MantineProvider>
         <Notifications />
         <Container size={1945} style={{ padding: 0, margin: 0 }}>
