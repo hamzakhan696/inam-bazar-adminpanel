@@ -46,6 +46,7 @@ interface Lottery {
   price: number;
   images: string[] | null;
   status: string;
+  category: string;
 }
 
 export const Products = () => {
@@ -109,11 +110,11 @@ export const Products = () => {
     try {
       const response = await axios.get<Product[]>(`${import.meta.env.VITE_APP_API_BASE_URL}/products`);
       const data = Array.isArray(response.data) ? response.data : [];
-      console.log('Products API response:', data);
+      
       setProducts(data);
       setFilteredProducts(data);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      
       setError('Failed to fetch products. Please try again.');
       setProducts([]);
       setFilteredProducts([]);
@@ -128,11 +129,11 @@ export const Products = () => {
     try {
       const response = await axios.get<Lottery[]>(`${import.meta.env.VITE_APP_API_BASE_URL}/lotteries`);
       const data = Array.isArray(response.data) ? response.data : [];
-      console.log('Lotteries API response:', data);
+      
       setLotteries(data);
       setFilteredLotteries(data);
     } catch (error) {
-      console.error('Error fetching lotteries:', error);
+      
       setError('Failed to fetch lotteries. Please try again.');
       setLotteries([]);
       setFilteredLotteries([]);
@@ -146,7 +147,13 @@ export const Products = () => {
       const response = await axios.get<Category[]>(`${import.meta.env.VITE_APP_API_BASE_URL}/categories`);
       setCategories(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to fetch categories',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -275,7 +282,7 @@ export const Products = () => {
         autoClose: 3000,
       });
     } catch (error) {
-      console.error('Error deleting items:', error);
+      
       notifications.show({
         title: 'Error',
         message: `Failed to delete ${isProductTab ? 'products' : 'lotteries'}. Please try again.`,
@@ -324,7 +331,7 @@ export const Products = () => {
         autoClose: 3000,
       });
     } catch (error) {
-      console.error('Error updating item:', error);
+      
       notifications.show({
         title: 'Error',
         message: `Failed to update ${isProductTab ? 'product' : 'lottery'}. Please try again.`,
@@ -360,7 +367,6 @@ export const Products = () => {
 
   const getImageUrl = (image: { url: string; color: string } | string | null | undefined) => {
     if (!image) {
-      console.warn('Image is null or undefined');
       return 'https://via.placeholder.com/150';
     }
     let imageUrl: string;
@@ -369,7 +375,6 @@ export const Products = () => {
     } else if (typeof image === 'string') {
       imageUrl = image;
     } else {
-      console.warn('Image path is invalid:', image);
       return 'https://via.placeholder.com/150';
     }
     const isAbsoluteUrl = imageUrl.startsWith('http');
@@ -394,7 +399,7 @@ export const Products = () => {
         autoClose: 3000,
       });
     } catch (error) {
-      console.error('Failed to update lottery status:', error);
+      
       notifications.show({
         title: 'Error',
         message: 'Failed to change status. Please try again.',
@@ -461,6 +466,13 @@ export const Products = () => {
           </th>
           <th style={{ padding: '12px', color: '#4C4E6A' }}>{isProductTab ? 'Product' : 'Campaign Name'}</th>
           <th style={{ padding: '12px', color: '#4C4E6A' }}>Status</th>
+          {!isProductTab ? (
+              <th style={{ padding: '12px', color: '#4C4E6A' }}>Category Status</th>
+            ) :
+            (
+              ""
+            )
+          }
           <th style={{ padding: '12px', color: '#4C4E6A' }}>Inventory</th>
           <th style={{ padding: '12px', color: '#4C4E6A' }}>{isProductTab ? 'Category' : 'Closed In'}</th>
         </tr>
@@ -563,7 +575,7 @@ export const Products = () => {
                   <tbody>
                     {filteredProducts.map((product) => {
                       const status = getProductStatusLabel(product.status);
-                      console.log('Product:', product.title, 'Images:', product.images);
+                      
                       return (
                         <tr key={product.id} style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
                           <td style={{ padding: '12px' }}>
@@ -638,7 +650,7 @@ export const Products = () => {
                     {filteredLotteries.map((lottery) => {
                       const endDate = new Date(lottery.endDate);
                       const formattedEndDate = endDate.toLocaleDateString();
-                      console.log('Lottery:', lottery.title, 'Images:', lottery.images);
+                      
                       return (
                         <tr key={lottery.id} style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
                           <td style={{ padding: '12px' }}>
@@ -675,6 +687,7 @@ export const Products = () => {
                               }}
                             />
                           </td>
+                          <td style={{ padding: '12px' }}>{lottery.category}</td>
                           <td style={{ padding: '12px', color: '#FF002E' }}>{lottery.quantity} in Stocks</td>
                           <td style={{ padding: '12px' }}>{formattedEndDate}</td>
                         </tr>

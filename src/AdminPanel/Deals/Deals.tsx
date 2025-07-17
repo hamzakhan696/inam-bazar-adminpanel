@@ -80,7 +80,7 @@ export const Deals = () => {
     try {
       const response = await axios.get<Deal[]>(`${import.meta.env.VITE_APP_API_BASE_URL}/deals`);
       const data = Array.isArray(response.data) ? response.data : [];
-      console.log('Deals API response:', data);
+      
       setDeals(data);
       setFilteredDeals(data);
     } catch (error) {
