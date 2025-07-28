@@ -11,22 +11,90 @@ import {
   Button,
   Image,
   SimpleGrid,
-  Flex,
+  NumberInput,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSearch } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import axios from 'axios';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 interface FileWithPreview {
   url: string;
   name: string;
+  file: File;
 }
 
-export const AddNewDeal = () => {
+interface FormData {
+  title: string;
+  description: string;
+  images: string[];
+  productId: number | undefined;
+  lotteryId: number | undefined;
+  price: number | undefined;
+  comparePrice: number | undefined;
+  discount: number | undefined;
+  quantity: number | undefined;
+}
+
+interface Product {
+  id: number;
+  title: string;
+}
+
+interface Lottery {
+  id: number;
+  title: string;
+}
+
+interface AddNewDealProps {
+  fetchDeals: () => Promise<void>;
+}
+
+
+export const AddNewDeal = ({ fetchDeals }: AddNewDealProps) => {
+  const [formData, setFormData] = useState<FormData>({
+    title: '',
+    description: '',
+    images: [],
+    productId: undefined,
+    lotteryId: undefined,
+    price: undefined,
+    comparePrice: undefined,
+    discount: undefined,
+    quantity: undefined,
+  });
   const [isDiscountChecked, setIsDiscountChecked] = useState<boolean>(false);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [lotteries, setLotteries] = useState<Lottery[]>([]);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
   const isMediumScreen = useMediaQuery('(max-width: 1024px)');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [productsResponse, lotteriesResponse] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/products`),
+          axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/lotteries`),
+        ]);
+
+        setProducts(Array.isArray(productsResponse.data) ? productsResponse.data : []);
+        setLotteries(Array.isArray(lotteriesResponse.data) ? lotteriesResponse.data : []);
+      } catch (err) {
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to fetch products or lotteries. Please try again.',
+          color: 'red',
+          icon: <IconX size={18} />,
+          autoClose: 3000,
+        });
+        setProducts([]);
+        setLotteries([]);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleFileChange = (selectedFiles: File[] | null) => {
     if (selectedFiles) {
@@ -35,8 +103,13 @@ export const AddNewDeal = () => {
         .map((file) => ({
           url: URL.createObjectURL(file),
           name: file.name,
+          file,
         }));
       setFiles([...files, ...newFiles].slice(0, 5));
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...newFiles.map((f) => f.name)].slice(0, 5),
+      }));
     }
   };
 
@@ -45,6 +118,82 @@ export const AddNewDeal = () => {
       files.forEach((file) => URL.revokeObjectURL(file.url));
     };
   }, [files]);
+
+  const handleInputChange = (field: keyof FormData, value: any) => {
+    if (field === 'productId' || field === 'lotteryId') {
+      setFormData((prev) => ({ ...prev, [field]: value ? Number(value) : undefined }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.description || !formData.price || !formData.quantity || !formData.productId) {
+      notifications.show({
+        title: 'Error',
+        message: 'Please fill in all required fields',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
+      files.forEach((file) => {
+        formDataToSend.append('images', file.file);
+      });
+      formDataToSend.append('productId', formData.productId!.toString());
+      if (formData.lotteryId) {
+        formDataToSend.append('lotteryId', formData.lotteryId.toString());
+      }
+      formDataToSend.append('price', formData.price.toString());
+      formDataToSend.append('comparePrice', formData.comparePrice?.toString() || '0');
+      formDataToSend.append('discount', formData.discount?.toString() || '0');
+      formDataToSend.append('quantity', formData.quantity.toString());
+
+      await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/deals`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      notifications.show({
+        title: 'Success',
+        message: 'Deal added successfully!',
+        color: 'teal',
+        icon: <IconCheck size={18} />,
+        autoClose: 3000,
+      });
+
+      await fetchDeals();
+
+      setFormData({
+        title: '',
+        description: '',
+        images: [],
+        productId: undefined,
+        lotteryId: undefined,
+        price: undefined,
+        comparePrice: undefined,
+        discount: undefined,
+        quantity: undefined,
+      });
+      setFiles([]);
+      setIsDiscountChecked(false);
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to add deal. Please try again.',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 3000,
+      });
+    }
+  };
 
   const previews = files.map((file, index) => (
     <Box key={index} style={{ position: 'relative', width: '80px', height: '80px' }}>
@@ -74,7 +223,9 @@ export const AddNewDeal = () => {
         <Grid.Col span={isSmallScreen ? 12 : 6}>
           <TextInput
             label="Title"
-            placeholder="Enter product title"
+            placeholder="Enter deal title"
+            value={formData.title}
+            onChange={(event) => handleInputChange('title', event.currentTarget.value)}
             mb="sm"
             required
             style={{ width: isSmallScreen ? '100%' : '60%' }}
@@ -93,7 +244,9 @@ export const AddNewDeal = () => {
           />
           <Textarea
             label="Description"
-            placeholder="Enter product description"
+            placeholder="Enter deal description"
+            value={formData.description}
+            onChange={(event) => handleInputChange('description', event.currentTarget.value)}
             minRows={4}
             mb="sm"
             required
@@ -115,11 +268,12 @@ export const AddNewDeal = () => {
           <Box>
             <FileInput
               label="Media"
-              placeholder="Upload product images"
+              placeholder="Upload deal images (Max 5)"
               accept="image/*"
               multiple
-              required
               mb="sm"
+              onChange={handleFileChange}
+              value={files.map((file) => file.file)}
               style={{ width: isSmallScreen ? '100%' : '60%' }}
               styles={{
                 input: {
@@ -140,33 +294,36 @@ export const AddNewDeal = () => {
                   color: '#4C4E6A',
                 },
               }}
-              onChange={handleFileChange}
-              value={files.map((file) => new File([], file.name))}
             />
-            {/* <Center mt="sm">
-              <Group direction="column" align="center" spacing="xs">
-                <IconUpload size={40} color="#53CCFF" />
-                <Text size="sm" color="#4C4E6A">
-                  Upload image (Max 5)
-                </Text>
-              </Group>
-            </Center> */}
             {files.length > 0 && (
               <SimpleGrid cols={isSmallScreen ? 3 : 8} spacing="xs" mt="sm">
                 {previews}
               </SimpleGrid>
             )}
           </Box>
+        </Grid.Col>
+
+        {/* Right Column */}
+        <Grid.Col span={isSmallScreen ? 12 : 6}>
           <Select
-            label="Category"
-            placeholder="Select category"
-            data={['T-Shirts', 'Jackets', 'Pants', 'Accessories']}
+            label="Product"
+            placeholder="Select product"
+            value={formData.productId ? formData.productId.toString() : null}
+            onChange={(value) => handleInputChange('productId', value)}
+            data={products
+              .filter((product) => product.id && product.title)
+              .map((product) => ({
+                value: product.id.toString(),
+                label: product.title,
+              }))}
             mb="sm"
+            required
+            searchable
             style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
               input: {
                 padding: '25px 20px',
-                borderRadius: '10px', 
+                borderRadius: '10px',
                 borderColor: '#53CCFF',
               },
               label: {
@@ -174,51 +331,47 @@ export const AddNewDeal = () => {
                 marginBottom: '5px',
                 color: '#4C4E6A',
               },
+              dropdown: {
+                zIndex: 1000,
+              },
             }}
           />
-        </Grid.Col>
-
-        {/* Right Column */}
-        <Grid.Col span={isSmallScreen ? 12 : 6}>
-        <Flex gap={20} align="stretch">
-          <TextInput
-            label="Products"
-            leftSection={<IconSearch size={20} color="#53CCFF" />}
-            placeholder="Search for Products"
-            style={{ width: '300px' }}
+          <Select
+            label="Lottery"
+            placeholder="Select lottery"
+            value={formData.lotteryId ? formData.lotteryId.toString() : null}
+            onChange={(value) => handleInputChange('lotteryId', value)}
+            data={lotteries
+              .filter((lottery) => lottery.id && lottery.title)
+              .map((lottery) => ({
+                value: lottery.id.toString(),
+                label: lottery.title,
+              }))}
+            mb="sm"
+            searchable
+            style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
               input: {
-                backgroundColor: 'white',
+                padding: '25px 20px',
                 borderRadius: '10px',
-                border: '1px solid #53CCFF',
-                padding: '25px 40px',
+                borderColor: '#53CCFF',
               },
               label: {
                 fontSize: '18px',
                 marginBottom: '5px',
                 color: '#4C4E6A',
               },
+              dropdown: {
+                zIndex: 1000,
+              },
             }}
           />
-          <Button
-            style={{
-              width: '143px',
-              padding: '10px',
-              backgroundColor: 'transparent',
-              border: '1px solid #53CCFF',
-              color: '#53CCFF',
-              height: '50px',
-              marginTop: '33px',
-              borderRadius: '10px',
-            }}
-          >
-            Browse
-          </Button>
-        </Flex>
-          <TextInput
+          <NumberInput
             label="Price"
             placeholder="Enter price"
-            type="number"
+            value={formData.price}
+            onChange={(value) => handleInputChange('price', value)}
+            min={0}
             mb="sm"
             required
             style={{ width: isSmallScreen ? '100%' : '60%' }}
@@ -230,15 +383,17 @@ export const AddNewDeal = () => {
               },
               label: {
                 fontSize: '18px',
-                margin: '10px 0px',
+                marginBottom: '5px',
                 color: '#4C4E6A',
               },
             }}
           />
-          <TextInput
+          <NumberInput
             label="Compare Price"
             placeholder="Enter compare price"
-            type="number"
+            value={formData.comparePrice}
+            onChange={(value) => handleInputChange('comparePrice', value)}
+            min={0}
             mb="sm"
             style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
@@ -268,10 +423,13 @@ export const AddNewDeal = () => {
             }}
           />
           {isDiscountChecked && (
-            <TextInput
+            <NumberInput
               label="Discount Percentage"
               placeholder="Enter discount percentage"
-              type="number"
+              value={formData.discount}
+              onChange={(value) => handleInputChange('discount', value)}
+              min={0}
+              max={100}
               mb="sm"
               style={{ width: isSmallScreen ? '100%' : '60%' }}
               styles={{
@@ -288,11 +446,14 @@ export const AddNewDeal = () => {
               }}
             />
           )}
-          <TextInput
+          <NumberInput
             label="Quantity"
             placeholder="Enter quantity"
-            type="number"
+            value={formData.quantity}
+            onChange={(value) => handleInputChange('quantity', value)}
+            min={0}
             mb="sm"
+            required
             style={{ width: isSmallScreen ? '100%' : '60%' }}
             styles={{
               input: {
@@ -310,8 +471,8 @@ export const AddNewDeal = () => {
         </Grid.Col>
       </Grid>
       <Group justify="flex-end" mt="md">
-        <Button c="white" style={{ backgroundColor: '#4C4E6A' }}>
-          Save Product
+        <Button c="white" style={{ backgroundColor: '#4C4E6A' }} onClick={handleSubmit}>
+          Save Deal
         </Button>
       </Group>
     </Box>

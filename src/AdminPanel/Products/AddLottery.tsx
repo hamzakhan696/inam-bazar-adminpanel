@@ -30,6 +30,7 @@ interface FormData {
   quantity: string;
   price: string;
   status: string;
+  category: string;
 }
 
 interface AddLotteryProps {
@@ -45,6 +46,7 @@ export const AddLottery = ({ fetchLotteries }: AddLotteryProps) => {
     quantity: '',
     price: '',
     status: 'active',
+    category: 'active',
   });
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [loading, setLoading] = useState(false);
@@ -80,7 +82,7 @@ export const AddLottery = ({ fetchLotteries }: AddLotteryProps) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.title || !formData.description || !formData.startDate || !formData.endDate || !formData.quantity || !formData.price || !formData.status) {
+    if (!formData.title || !formData.description || !formData.startDate || !formData.endDate || !formData.quantity || !formData.price || !formData.status || !formData.category) {
       notifications.show({
         title: 'Error',
         message: 'Please fill in all required fields',
@@ -101,6 +103,7 @@ export const AddLottery = ({ fetchLotteries }: AddLotteryProps) => {
       formDataToSend.append('quantity', formData.quantity);
       formDataToSend.append('price', formData.price);
       formDataToSend.append('status', formData.status);
+      formDataToSend.append('category', formData.category);
       
       files.forEach((file) => {
         formDataToSend.append('images', file.file);
@@ -128,6 +131,7 @@ export const AddLottery = ({ fetchLotteries }: AddLotteryProps) => {
         quantity: '',
         price: '',
         status: 'active',
+        category: 'active',
       });
       setFiles([]);
       await fetchLotteries();
@@ -139,7 +143,7 @@ export const AddLottery = ({ fetchLotteries }: AddLotteryProps) => {
         icon: <IconX size={18} />,
         autoClose: 3000,
       });
-      console.error(err);
+      
     } finally {
       setLoading(false);
     }
@@ -357,6 +361,33 @@ export const AddLottery = ({ fetchLotteries }: AddLotteryProps) => {
               data={[
                 { value: 'active', label: 'Active' },
                 { value: 'inactive', label: 'Inactive' },
+              ]}
+              mb="sm"
+              required
+              style={{ width: isSmallScreen ? '100%' : '60%' }}
+              styles={{
+                input: {
+                  padding: '25px 20px',
+                  borderRadius: '10px',
+                  borderColor: '#53CCFF',
+                },
+                label: {
+                  fontSize: '18px',
+                  marginBottom: '5px',
+                  color: '#4C4E6A',
+                },
+              }}
+            />
+            <Select
+              label="Category"
+              placeholder="Select category"
+              name="category"
+              value={formData.category}
+              onChange={(value) => setFormData((prev) => ({ ...prev, category: value || 'active' }))}
+              data={[
+                { value: 'active', label: 'Active' },
+                { value: 'lucky-dip', label: 'Lucky Dip' },
+                { value: 'treasure', label: 'Treasure' },
               ]}
               mb="sm"
               required
