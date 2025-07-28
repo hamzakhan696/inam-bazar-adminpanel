@@ -1,18 +1,61 @@
-import { Group, Box, Paper, Tabs, Table, FloatingIndicator, Grid, Text } from "@mantine/core";
+import { Group, Box, Paper, Tabs, FloatingIndicator, Grid, Text, Loader } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { TopBar } from "../TopBar/TopBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import classes from '../TabCSS/products.module.css';
 import { IconHome } from "@tabler/icons-react";
+import { ProductOrders } from "./ProductOrders";
+import { LotteryOrders } from "./LotteryOrders";
+
+interface OrderItem {
+  id: number;
+  orderId: number;
+  productId?: number;
+  lotteryId?: number;
+  quantity: number;
+  price: string;
+}
+
+interface Customer {
+  id: number;
+  firstName: string;
+  lastName: string;
+  address: string | null;
+  city: string | null;
+  postalCode: string | null;
+  district: string | null;
+  isEmailSubscribed: boolean;
+  isSmsSubscribed: boolean;
+}
+
+interface Order {
+  id: number;
+  orderNumber: string;
+  customerId: number;
+  customer: Customer;
+  status: string;
+  orderType: 'product' | 'lottery';
+  paymentMethod: string;
+  paymentStatus: string;
+  totalPayment: string;
+  items: OrderItem[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 export const Orders = () => {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
   const [value, setValue] = useState<string | null>('1');
   const [controlsRefs, setControlsRefs] = useState<Record<string, HTMLButtonElement | null>>({});
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const setControlRef = (val: string) => (node: HTMLButtonElement) => {
     controlsRefs[val] = node;
     setControlsRefs(controlsRefs);
   };
+
   const isExtraSmallScreen = useMediaQuery('(max-width: 480px)');
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isMediumScreen = useMediaQuery('(max-width: 1024px)');
@@ -28,6 +71,37 @@ export const Orders = () => {
           : '30px';
 
   const containerWidth = `calc(100vw - ${containerMargin} * 2)`;
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/orders`);
+        setOrders(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const productOrders = orders.filter(order => order.orderType === 'product');
+  const lotteryOrders = orders.filter(order => order.orderType === 'lottery');
+
+  const totalOrders = orders.length;
+  const totalItems = orders.reduce((sum, order) => sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
+  const returnedItems = orders.filter(order => order.status === 'returned').reduce((sum, order) => sum + order.items.length, 0);
+  const deliveredItems = orders.filter(order => order.status === 'delivered').reduce((sum, order) => sum + order.items.length, 0);
+
+  if (loading) {
+    return (
+      <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Loader size="lg" />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -49,231 +123,231 @@ export const Orders = () => {
         <TopBar />
       </Group>
 
-        <Grid>
-          <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+      <Grid>
+        <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+          <Group
+            style={{
+              backgroundColor: "white",
+              padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
+              borderRadius: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+            }}
+          >
             <Group
               style={{
-                backgroundColor: "white",
-                padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
-                borderRadius: "10px",
                 display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
               }}
             >
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  Total Order
-                </Text>
-                <span style={{ 
-                  backgroundColor: '#53CCFF', 
-                  color: 'white', 
-                  padding: '5px', 
-                  borderRadius: '20%', 
-                  marginRight: '10px' 
-                }}>
-                  <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
-                </span>
-              </Group>
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ 
-                  fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
-                  fontWeight: 'bold', 
-                  padding: 0, 
-                  margin: 0 
-                }}>
-                  2,343
-                </Text>
-                <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  33.3%
-                </Text>
-              </Group>
+              <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                Total Order
+              </Text>
+              <span style={{ 
+                backgroundColor: '#53CCFF', 
+                color: 'white', 
+                padding: '5px', 
+                borderRadius: '20%', 
+                marginRight: '10px' 
+              }}>
+                <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
+              </span>
             </Group>
-          </Grid.Col>
+            <Group
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Text style={{ 
+                fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
+                fontWeight: 'bold', 
+                padding: 0, 
+                margin: 0 
+              }}>
+                {totalOrders.toLocaleString()}
+              </Text>
+              <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                33.3%
+              </Text>
+            </Group>
+          </Group>
+        </Grid.Col>
 
-          <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+        <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+          <Group
+            style={{
+              backgroundColor: "white",
+              padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
+              borderRadius: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+            }}
+          >
             <Group
               style={{
-                backgroundColor: "white",
-                padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
-                borderRadius: "10px",
                 display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
               }}
             >
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  Items Ordered
-                </Text>
-                <span style={{ 
-                  backgroundColor: '#53CCFF', 
-                  color: 'white', 
-                  padding: '5px', 
-                  borderRadius: '20%', 
-                  marginRight: '10px' 
-                }}>
-                  <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
-                </span>
-              </Group>
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ 
-                  fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
-                  fontWeight: 'bold', 
-                  padding: 0, 
-                  margin: 0 
-                }}>
-                  43
-                </Text>
-                <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  33.3%
-                </Text>
-              </Group>
+              <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                Items Ordered
+              </Text>
+              <span style={{ 
+                backgroundColor: '#53CCFF', 
+                color: 'white', 
+                padding: '5px', 
+                borderRadius: '20%', 
+                marginRight: '10px' 
+              }}>
+                <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
+              </span>
             </Group>
-          </Grid.Col>
+            <Group
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Text style={{ 
+                fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
+                fontWeight: 'bold', 
+                padding: 0, 
+                margin: 0 
+              }}>
+                {totalItems.toLocaleString()}
+              </Text>
+              <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                33.3%
+              </Text>
+            </Group>
+          </Group>
+        </Grid.Col>
 
-          <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+        <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+          <Group
+            style={{
+              backgroundColor: "white",
+              padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
+              borderRadius: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+            }}
+          >
             <Group
               style={{
-                backgroundColor: "white",
-                padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
-                borderRadius: "10px",
                 display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
               }}
             >
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  Return Items
-                </Text>
-                <span style={{ 
-                  backgroundColor: '#53CCFF', 
-                  color: 'white', 
-                  padding: '5px', 
-                  borderRadius: '20%', 
-                  marginRight: '10px' 
-                }}>
-                  <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
-                </span>
-              </Group>
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ 
-                  fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
-                  fontWeight: 'bold', 
-                  padding: 0, 
-                  margin: 0 
-                }}>
-                  3
-                </Text>
-                <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  33.3%
-                </Text>
-              </Group>
+              <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                Return Items
+              </Text>
+              <span style={{ 
+                backgroundColor: '#53CCFF', 
+                color: 'white', 
+                padding: '5px', 
+                borderRadius: '20%', 
+                marginRight: '10px' 
+              }}>
+                <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
+              </span>
             </Group>
-          </Grid.Col>
+            <Group
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Text style={{ 
+                fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
+                fontWeight: 'bold', 
+                padding: 0, 
+                margin: 0 
+              }}>
+                {returnedItems.toLocaleString()}
+              </Text>
+              <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                33.3%
+              </Text>
+            </Group>
+          </Group>
+        </Grid.Col>
 
-          <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+        <Grid.Col span={isExtraSmallScreen ? 12 : isSmallScreen ? 6 : 3}>
+          <Group
+            style={{
+              backgroundColor: "white",
+              padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
+              borderRadius: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+            }}
+          >
             <Group
               style={{
-                backgroundColor: "white",
-                padding: isExtraSmallScreen ? "15px" : isMediumScreen ? "18px" : "20px",
-                borderRadius: "10px",
                 display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                boxShadow: '0px 0px 10px rgb(198, 194, 194)'
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
               }}
             >
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  Delivered items
-                </Text>
-                <span style={{ 
-                  backgroundColor: '#53CCFF', 
-                  color: 'white', 
-                  padding: '5px', 
-                  borderRadius: '20%', 
-                  marginRight: '10px' 
-                }}>
-                  <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
-                </span>
-              </Group>
-              <Group
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <Text style={{ 
-                  fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
-                  fontWeight: 'bold', 
-                  padding: 0, 
-                  margin: 0 
-                }}>
-                  955
-                </Text>
-                <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
-                  33.3%
-                </Text>
-              </Group>
+              <Text style={{ color: '#6B6B6A', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                Delivered items
+              </Text>
+              <span style={{ 
+                backgroundColor: '#53CCFF', 
+                color: 'white', 
+                padding: '5px', 
+                borderRadius: '20%', 
+                marginRight: '10px' 
+              }}>
+                <IconHome size={isExtraSmallScreen ? 16 : 20} color="white" />
+              </span>
             </Group>
-          </Grid.Col>
-        </Grid>
+            <Group
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Text style={{ 
+                fontSize: isExtraSmallScreen ? '18px' : isMediumScreen ? '22px' : '26px', 
+                fontWeight: 'bold', 
+                padding: 0, 
+                margin: 0 
+              }}>
+                {deliveredItems.toLocaleString()}
+              </Text>
+              <Text style={{ color: '#0FB271', fontSize: isExtraSmallScreen ? '12px' : isMediumScreen ? '14px' : '16px' }}>
+                33.3%
+              </Text>
+            </Group>
+          </Group>
+        </Grid.Col>
+      </Grid>
 
       <Paper style={{
           padding: isSmallScreen ? "20px" : "50px 20px",
@@ -297,107 +371,11 @@ export const Orders = () => {
           </Tabs.List>
 
           <Tabs.Panel value="1" pt="xs">
-            <Group justify="flex-start" style={{ margin: '10px 0', backgroundColor: '#EDEDED', padding: '15px', borderRadius: '10px' }}>
-              <span style={{ marginRight: '10px', fontWeight: 'bold', color: '#4C4E6A' }}>All</span>
-              <span style={{ marginRight: '10px', fontWeight: 'bold', color: '#4C4E6A' }}>Paid</span>
-              <span style={{ marginRight: '10px', fontWeight: 'bold', color: '#4C4E6A' }}>Unpaid</span>
-            </Group>
-            <div style={{ overflowX: "auto", width: "100%" }}>
-            <Table verticalSpacing="sm" style={{ textAlign: 'left' }}>
-              <thead>
-                <tr>
-                  <th style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Order Number</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Date</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Customer</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Total Payment</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Status</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Items</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
-                  <td style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></td>
-                  <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>#2222</td>
-                  <td style={{ padding: '12px' }}>01/01/20</td>
-                  <td style={{ padding: '12px', color: '#FF002E' }}>Dwayne Johnson</td>
-                  <td style={{ padding: '12px' }}>Rs. 1756</td>
-                  <td style={{ padding: '12px' }}><span style={{ backgroundColor: '#D4F6E6', padding: '5px 10px', borderRadius: '5px', color: 'green' }}>Fulfilled</span></td>
-                  <td style={{ padding: '12px' }}>06</td>
-                </tr>
-                <tr style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
-                  <td style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></td>
-                  <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>#2222</td>
-                  <td style={{ padding: '12px' }}>01/01/20</td>
-                  <td style={{ padding: '12px', color: '#FF002E' }}>Dwayne Johnson</td>
-                  <td style={{ padding: '12px' }}>Rs. 1756</td>
-                  <td style={{ padding: '12px' }}><span style={{ backgroundColor: '#D4F6E6', padding: '5px 10px', borderRadius: '5px', color: 'green' }}>Fulfilled</span></td>
-                  <td style={{ padding: '12px' }}>06</td>
-                </tr>
-                <tr style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
-                  <td style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></td>
-                  <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>#2222</td>
-                  <td style={{ padding: '12px' }}>01/01/20</td>
-                  <td style={{ padding: '12px', color: '#FF002E' }}>Dwayne Johnson</td>
-                  <td style={{ padding: '12px' }}>Rs. 1756</td>
-                  <td style={{ padding: '12px' }}><span style={{ backgroundColor: '#D4F6E6', padding: '5px 10px', borderRadius: '5px', color: 'green' }}>Fulfilled</span></td>
-                  <td style={{ padding: '12px' }}>06</td>
-                </tr>
-              </tbody>
-            </Table>
-            </div>
+            <ProductOrders orders={productOrders} />
           </Tabs.Panel>
 
           <Tabs.Panel value="2" pt="xs">
-            <Group justify="flex-start" style={{ margin: '10px 0', backgroundColor: '#EDEDED', padding: '15px', borderRadius: '10px' }}>
-              <span style={{ marginRight: '10px', fontWeight: 'bold', color: '#4C4E6A' }}>All</span>
-              <span style={{ marginRight: '10px', fontWeight: 'bold', color: '#4C4E6A' }}>Paid</span>
-              <span style={{ marginRight: '10px', fontWeight: 'bold', color: '#4C4E6A' }}>Unpaid</span>
-            </Group>
-            <div style={{ overflowX: "auto", width: "100%" }}>
-            <Table verticalSpacing="sm" style={{ textAlign: 'left' }}>
-              <thead>
-                <tr>
-                  <th style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Invoice Number</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Date</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Lottery Name</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Customer Email</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Total Order</th>
-                  <th style={{ padding: '12px', color: '#4C4E6A' }}>Items</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
-                  <td style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></td>
-                  <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>#2222</td>
-                  <td style={{ padding: '12px' }}>01/01/20</td>
-                  <td style={{ padding: '12px', color: '#FF002E' }}>Land Rover 2024</td>
-                  <td style={{ padding: '12px' }}>Customer@gmail.com</td>
-                  <td style={{ padding: '12px' }}>x2</td>
-                  <td style={{ padding: '12px' }}>06</td>
-                </tr>
-                <tr style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
-                  <td style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></td>
-                  <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>#2222</td>
-                  <td style={{ padding: '12px' }}>01/01/20</td>
-                  <td style={{ padding: '12px', color: '#FF002E' }}>Land Rover 2024</td>
-                  <td style={{ padding: '12px' }}>Customer@gmail.com</td>
-                  <td style={{ padding: '12px' }}>x2</td>
-                  <td style={{ padding: '12px' }}>06</td>
-                </tr>
-                <tr style={{ backgroundColor: 'white', marginBottom: '8px', display: 'table-row' }}>
-                  <td style={{ padding: '12px' }}><input type="checkbox" style={{ width: '20px', height: '20px' }} /></td>
-                  <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>#2222</td>
-                  <td style={{ padding: '12px' }}>01/01/20</td>
-                  <td style={{ padding: '12px', color: '#FF002E' }}>Land Rover 2024</td>
-                  <td style={{ padding: '12px' }}>Customer@gmail.com</td>
-                  <td style={{ padding: '12px' }}>x2</td>
-                  <td style={{ padding: '12px' }}>06</td>
-                </tr>
-              </tbody>
-            </Table>
-            </div>
+            <LotteryOrders orders={lotteryOrders} />
           </Tabs.Panel>
         </Tabs>
       </Paper>
